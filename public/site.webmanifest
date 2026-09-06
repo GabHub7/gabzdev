@@ -1,0 +1,15 @@
+{
+  "name": "Gabriel Gonzales — GabzDev Portfolio",
+  "short_name": "GabzDev",
+  "description": "Full-stack developer portfolio — Next.js, Supabase, Firebase.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0F1C",
+  "theme_color": "#0A0F1C",
+  "icons": [
+    { "src": "/favicon-16.png", "sizes": "16x16", "type": "image/png" },
+    { "src": "/favicon-32.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "/favicon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

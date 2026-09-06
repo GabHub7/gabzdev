@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Halaman admin gak perlu diindex Google
+Disallow: /dashboard
+Disallow: /login
+
+Sitemap: https://gabzdev.my.id/sitemap.xml

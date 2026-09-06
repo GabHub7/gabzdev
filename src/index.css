@@ -1,0 +1,729 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 220 70% 59%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 220 70% 59%;
+    --radius: 0.625rem;
+
+    /* Palette GabzStore (referensi: gabzstore.web.id) */
+    --glass-white: rgba(255, 255, 255, 0.05);
+    --glass-white-strong: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.09);
+    --glass-shadow: rgba(0, 0, 0, 0.35);
+    --glass-blue-deep: rgba(59, 95, 227, 0.14);
+    --primary-blue: #3B5FE3;         /* biru GabzStore (bukan navy soft) */
+    --primary-blue-hover: #2F4FD8;
+    --dark-navy: #0E1424;             /* dark navy near-black GabzStore */
+    --dark-text: #0F172A;
+    --body-text: #475569;
+    --muted-text: #64748B;
+    --star-gold: #FBBF24;
+    --wa-green: #22C55E;
+    --wa-green-hover: #16A34A;
+    --page-bg: #F5F7FA;               /* light bg page utama */
+    --stat-bg: #FFFFFF;
+    --border-soft: #E5EAF0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Poppins', 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  body {
+    font-family: 'Poppins', 'Inter', system-ui, -apple-system, sans-serif;
+    color: var(--dark-text);
+    background: var(--page-bg);
+    overflow-x: hidden;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  section[id] {
+    scroll-margin-top: 90px;
+  }
+}
+
+@layer components {
+  /* Standard Glass Card */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(16px) saturate(120%);
+    -webkit-backdrop-filter: blur(16px) saturate(120%);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 4px 30px rgba(15, 23, 42, 0.06);
+    border-radius: 20px;
+  }
+
+  /* Enhanced Glass Card */
+  .glass-card-strong {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px) saturate(130%);
+    -webkit-backdrop-filter: blur(20px) saturate(130%);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    box-shadow: 0 8px 40px rgba(15, 23, 42, 0.08);
+    border-radius: 20px;
+  }
+
+  /* Glass Pill */
+  .glass-pill {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px) saturate(110%);
+    -webkit-backdrop-filter: blur(12px) saturate(110%);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 9999px;
+  }
+
+  /* Glass Button (outlined) */
+  .glass-button {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    border-radius: 9999px;
+    transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .glass-button:hover {
+    background: rgba(255, 255, 255, 0.5);
+    border-color: rgba(255, 255, 255, 0.9);
+    transform: scale(1.02);
+  }
+
+  .glass-button:active {
+    transform: scale(0.98);
+  }
+
+  /* Deep Blue Glass Panel */
+  .glass-blue-panel {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(29, 78, 216, 0.06));
+    backdrop-filter: blur(18px) saturate(125%);
+    -webkit-backdrop-filter: blur(18px) saturate(125%);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 24px;
+  }
+
+  /* Primary solid button */
+  .btn-primary {
+    background: linear-gradient(135deg, #4F7FE0, #2F57B8);
+    color: white;
+    border-radius: 0;
+    padding: 14px 28px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 220ms ease, background 220ms ease;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #2F57B8, #14213D);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 10px 28px rgba(79, 127, 224, 0.4);
+  }
+
+  .btn-primary:active {
+    transform: scale(0.92);
+    transition: transform 100ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* ── Efek bounce/"toweew" universal — tinggal tambahin class ini ke
+     tombol apapun (nav, hero, footer, whatsapp float, dll) biar dapet
+     hover interaktif + spring-bounce pas diklik, konsisten di semua
+     tombol tanpa perlu ubah warna/bentuk aslinya. ── */
+  .btn-bounce {
+    transition: transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 220ms ease;
+  }
+  .btn-bounce:hover {
+    transform: translateY(-2px) scale(1.05);
+  }
+  .btn-bounce:active {
+    transform: scale(0.92);
+    transition: transform 100ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .btn-primary, .btn-bounce { transition: none !important; }
+    .btn-primary:hover, .btn-bounce:hover, .btn-primary:active, .btn-bounce:active { transform: none !important; }
+  }
+
+  /* Section watermark number */
+  .section-watermark {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 200px;
+    color: rgba(255, 255, 255, 0.035);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    user-select: none;
+    line-height: 1;
+    z-index: 0;
+  }
+
+  /* Skill bar track */
+  .skill-track {
+    width: 100%;
+    height: 8px;
+    border-radius: 2px;
+    background: rgba(79, 127, 224, 0.14);
+    overflow: visible;
+    position: relative;
+  }
+
+  /* Skill bar fill */
+  .skill-fill {
+    height: 8px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #7BA1EC, #4F7FE0);
+    transition: width 1500ms cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+  }
+
+  /* Glass node at skill bar tip */
+  .skill-node {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(20px) saturate(130%);
+    -webkit-backdrop-filter: blur(20px) saturate(130%);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 8px 40px rgba(31, 38, 135, 0.08);
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* ── Dark Bento Panel (Astralune-style, dipakai di Services & WhyHireMe) ── */
+  .bento-panel-dark {
+    background: linear-gradient(180deg, #0D0F16 0%, #0B0D12 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .bento-panel-dark::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 15% 0%, rgba(59, 130, 246, 0.06), transparent 45%),
+      radial-gradient(circle at 85% 100%, rgba(59, 130, 246, 0.05), transparent 45%);
+    pointer-events: none;
+  }
+
+  .bento-card-dark {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+  }
+
+  .bento-card-dark:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(59, 130, 246, 0.35);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(59, 130, 246, 0.1);
+  }
+
+  .bento-icon-dark {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60A5FA;
+  }
+
+  /* Focus visible styles */
+  .focus-ring:focus-visible {
+    outline: 2px solid var(--primary-blue);
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  /* View transition fade-in */
+  @keyframes viewFadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .animate-view-in {
+    animation: viewFadeIn 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* Shake animation for login error */
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    15%        { transform: translateX(-8px); }
+    30%        { transform: translateX(7px); }
+    45%        { transform: translateX(-6px); }
+    60%        { transform: translateX(5px); }
+    75%        { transform: translateX(-4px); }
+    90%        { transform: translateX(3px); }
+  }
+
+  .animate-shake {
+    animation: shake 0.55s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  }
+
+  /* Modal backdrop */
+  @keyframes modalBgIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .animate-modal-bg {
+    animation: modalBgIn 250ms ease forwards;
+  }
+
+  /* Modal card entrance */
+  @keyframes modalIn {
+    from {
+      opacity: 0;
+      transform: scale(0.93) translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .animate-modal-in {
+    animation: modalIn 350ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* Spinner for loading states */
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  /* Float animation for profile */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  .animate-float {
+    animation: float 4s ease-in-out infinite;
+  }
+
+  /* Pulse animation for badge */
+  @keyframes pulse-subtle {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.03);
+    }
+  }
+
+  .animate-pulse-subtle {
+    animation: pulse-subtle 3s ease-in-out infinite;
+  }
+
+  /* Glow animation for skill node */
+  @keyframes glow {
+    0%, 100% {
+      box-shadow: 0 0 5px rgba(37, 99, 235, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 15px rgba(37, 99, 235, 0.6), 0 0 30px rgba(37, 99, 235, 0.2);
+    }
+  }
+
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite;
+  }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 600ms cubic-bezier(0.16, 1, 0.3, 1), transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Stagger children */
+  .stagger-children > * {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 600ms cubic-bezier(0.16, 1, 0.3, 1), transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .stagger-children.visible > *:nth-child(1) { transition-delay: 0ms; }
+  .stagger-children.visible > *:nth-child(2) { transition-delay: 100ms; }
+  .stagger-children.visible > *:nth-child(3) { transition-delay: 200ms; }
+  .stagger-children.visible > *:nth-child(4) { transition-delay: 300ms; }
+  .stagger-children.visible > *:nth-child(5) { transition-delay: 400ms; }
+  .stagger-children.visible > *:nth-child(6) { transition-delay: 500ms; }
+  .stagger-children.visible > *:nth-child(7) { transition-delay: 600ms; }
+  .stagger-children.visible > *:nth-child(8) { transition-delay: 700ms; }
+
+  .stagger-children.visible > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Custom Cursor ── */
+  .cursor-dot {
+    width: 8px;
+    height: 8px;
+    background: #2563EB;
+    border-radius: 50%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 99999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.08s ease, background 0.2s ease, width 0.2s ease, height 0.2s ease;
+    mix-blend-mode: multiply;
+  }
+
+  .cursor-ring {
+    width: 36px;
+    height: 36px;
+    border: 2px solid rgba(37, 99, 235, 0.5);
+    border-radius: 50%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 99998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), width 0.25s ease, height 0.25s ease, border-color 0.2s ease, opacity 0.2s ease;
+  }
+
+  .cursor-dot.cursor-hover {
+    width: 12px;
+    height: 12px;
+    background: #1D4ED8;
+  }
+
+  .cursor-ring.cursor-hover {
+    width: 56px;
+    height: 56px;
+    border-color: rgba(37, 99, 235, 0.3);
+  }
+
+  /* ── Scroll Progress Bar ── */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #7BA1EC, #4F7FE0);
+    z-index: 9999;
+    transform-origin: left;
+    border-radius: 0 2px 2px 0;
+    box-shadow: 0 0 8px rgba(79, 127, 224, 0.5);
+  }
+
+  /* ── Text shimmer on section headings ── */
+  @keyframes shimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  .hero-headline {
+    font-family: 'Space Grotesk', 'Poppins', system-ui, sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  .text-shimmer {
+    background: linear-gradient(90deg, #1E293B 30%, #2563EB 50%, #1E293B 70%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 4s linear infinite;
+  }
+
+  /* Varian buat dipasang di atas background gelap */
+  .text-shimmer-dark {
+    background: linear-gradient(90deg, #F1F5F9 30%, #60A5FA 50%, #F1F5F9 70%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 4s linear infinite;
+  }
+
+  /* ── Magnetic button ripple ── */
+  @keyframes ripple {
+    0%   { transform: scale(0); opacity: 0.5; }
+    100% { transform: scale(4); opacity: 0; }
+  }
+
+  .btn-ripple {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-ripple::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(0);
+    opacity: 0;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+  }
+
+  .btn-ripple:active::after {
+    animation: ripple 0.5s ease forwards;
+  }
+
+  /* ── Gradient border glow on glass card hover ── */
+  @keyframes borderRotate {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .glass-card-glow {
+    position: relative;
+  }
+
+  .glass-card-glow::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(79,127,224,0), rgba(79,127,224,0.35), rgba(79,127,224,0));
+    background-size: 300% 300%;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: -1;
+    animation: borderRotate 3s ease infinite;
+  }
+
+  .glass-card-glow:hover::before {
+    opacity: 1;
+  }
+
+  /* ── Floating particles ── */
+  @keyframes floatParticle {
+    0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0.7; }
+    33%  { transform: translateY(-20px) translateX(10px) scale(1.1); opacity: 1; }
+    66%  { transform: translateY(-10px) translateX(-8px) scale(0.9); opacity: 0.8; }
+    100% { transform: translateY(0) translateX(0) scale(1); opacity: 0.7; }
+  }
+
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: floatParticle var(--duration, 6s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+  }
+
+  /* ── Typewriter cursor blink ── */
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+  }
+
+  .typewriter-cursor {
+    display: inline-block;
+    width: 3px;
+    height: 1em;
+    background: #2563EB;
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    animation: blink 1s step-end infinite;
+    border-radius: 1px;
+  }
+
+  /* ── Section reveal with clip-path ── */
+  @keyframes clipReveal {
+    from { clip-path: inset(0 100% 0 0); }
+    to   { clip-path: inset(0 0% 0 0); }
+  }
+
+  .animate-clip-reveal {
+    animation: clipReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* ── Tilt card effect (applied via JS) ── */
+  .tilt-card {
+    transform-style: preserve-3d;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* ── Neon glow on hover for social buttons ── */
+  @keyframes neonPulse {
+    0%, 100% { box-shadow: 0 0 5px rgba(37,99,235,0.4), 0 0 10px rgba(37,99,235,0.2); }
+    50%       { box-shadow: 0 0 12px rgba(37,99,235,0.7), 0 0 24px rgba(37,99,235,0.4); }
+  }
+
+  .neon-hover:hover {
+    animation: neonPulse 1.5s ease-in-out infinite;
+  }
+
+  /* ── Skills marquee (clean, logo brand asli) ── */
+
+  /* ── Brand wordmark (loading → header transition) ──
+     Base-nya Poppins (dipake juga di logo navbar, teks kecil).
+     Anton cuma buat versi gede di loading screen — lihat
+     .brand-wordmark-loading di bawah, bukan nimpa base class ini. ── */
+  .brand-wordmark {
+    font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  .brand-wordmark-loading {
+    font-family: 'Anton', 'Poppins', system-ui, -apple-system, sans-serif;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+  }
+
+  .skills-eyebrow {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #64748B;
+    margin-bottom: 30px;
+  }
+
+  .skills-stage {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 8px 0;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  }
+
+  .skills-row { overflow: hidden; }
+
+  .skills-track {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    width: max-content;
+    animation: skillsScroll 34s linear infinite;
+    will-change: transform;
+  }
+
+  .skills-track.reverse {
+    animation-name: skillsScrollReverse;
+  }
+
+  .skills-stage:hover .skills-track {
+    animation-play-state: paused;
+  }
+
+  .skill-pill {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    flex: 0 0 auto;
+    padding: 4px 6px;
+    opacity: 0.72;
+    transition: opacity 0.3s ease;
+  }
+
+  .skills-stage:hover .skill-pill { opacity: 0.42; }
+  .skill-pill:hover { opacity: 1 !important; }
+
+  .skill-pill-logo {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  .skill-pill-fallback {
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #3B5FE3;
+    background: rgba(59, 95, 227, 0.1);
+    flex-shrink: 0;
+  }
+
+  .skill-pill-name {
+    font-size: 16px;
+    font-weight: 500;
+    white-space: nowrap;
+    color: #334155;
+    letter-spacing: -0.01em;
+  }
+
+  @keyframes skillsScroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  @keyframes skillsScrollReverse {
+    from { transform: translateX(-50%); }
+    to   { transform: translateX(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skills-track { animation: none; }
+  }
+
+  /* ── Testimonial card — dipakai di dalam carousel embla (Testimonials.tsx
+     & Footer.tsx). Scroll/loop/drag-nya sekarang ditangani embla-carousel,
+     bukan CSS keyframe manual lagi — lihat komponen masing-masing. ── */
+  .testimonial-card {
+    width: 340px;
+    border-radius: 20px;
+  }
+
+  @media (max-width: 640px) {
+    .testimonial-card { width: 280px; }
+  }
+}
