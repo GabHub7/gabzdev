@@ -7,12 +7,17 @@ import { useSeo } from '../hooks/useSeo';
 import { ArrowUpRight } from 'lucide-react';
 import { SocialGlyph } from '../lib/socialIcon';
 import Magnetic from '../components/fx/Magnetic';
+import { AvailabilityBadge } from '../components/AvailabilityBadge';
 
 /**
- * Hero baru — wordmark besar dua-nada "GABZ" (outline) + "DEV" (solid biru)
+ * Hero — wordmark besar dua-nada "GABZ" (outline) + "DEV" (solid biru)
  * sebagai focal point utama, foto nempel di tengah nutupin sebagian teks.
- * Referensi: layout portfolio developer bergaya bold-typographic (pic 2
- * dari brief), bukan lagi pola "kiri teks - kanan foto" yang lama.
+ *
+ * v2 (revisi setelah feedback): section sekarang beneran "fullscreen"
+ * (min-h-dvh + center konten) di desktop MAUPUN mobile, bukan cuma
+ * setinggi konten. Badge availability dipindah ke Header (sebelah logo)
+ * buat layar md ke atas — di sini cuma nongol di mobile, karena header
+ * versi mobile cuma logo+hamburger, nggak ada tempat buat badge di situ.
  */
 
 export default function Hero() {
@@ -31,14 +36,25 @@ export default function Hero() {
   }, []);
 
   return (
-    <section id="hero" className="relative pt-28 md:pt-32 pb-10 px-6 md:px-10 overflow-hidden" style={{ background: '#FFFFFF' }}>
-      <div className="max-w-[1200px] mx-auto">
+    <section
+      id="hero"
+      className="relative min-h-dvh flex flex-col justify-center pt-24 md:pt-28 pb-12 px-6 md:px-10 overflow-hidden"
+      style={{ background: '#FFFFFF' }}
+    >
+      <div className="max-w-[1200px] mx-auto w-full">
+        {/* Badge — cuma di bawah lg, versi lg-ke-atas nongol di Header
+            (breakpoint HARUS sama kayak di Header biar nggak ada rentang
+            lebar layar yang badge-nya nggak muncul di dua-duanya). */}
+        <div className={`lg:hidden flex justify-center mb-6 transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+          <AvailabilityBadge />
+        </div>
+
         {/* Wordmark + foto — overlap di tengah */}
         <div className={`relative flex justify-center items-center transition-all duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
           <h1
             className="hero-headline relative flex flex-wrap justify-center items-baseline select-none"
             style={{
-              fontSize: 'clamp(64px, 13vw, 168px)',
+              fontSize: 'clamp(56px, 13vw, 168px)',
               lineHeight: 0.95,
               letterSpacing: '-0.02em',
               fontWeight: 700,
@@ -59,22 +75,23 @@ export default function Hero() {
             </span>
           </h1>
 
-          {/* Foto — nempel di tengah, nutupin sebagian wordmark.
-              v4 = versi crop rapat (padding transparan di sisi kiri asetnya
-              udah dibuang), plus left:50%+translateX(-50%) EKSPLISIT biar
-              posisinya nggak gantung ke "static position" flex item yang
-              absolute (nggak konsisten antar browser). */}
+          {/* Foto — nempel di tengah, nutupin sebagian wordmark. v4 = versi
+              crop rapat (padding transparan di sisi kiri asetnya udah
+              dibuang), left:50%+translateX(-50%) EKSPLISIT biar posisinya
+              nggak gantung ke "static position" flex item absolute.
+              CATATAN: drop-shadow SENGAJA dihapus — potongan bawah foto
+              rata/lurus, jadi blur bayangannya numpuk keliatan kayak
+              smudge kotak pudar (ini yang bikin "kayak ditempel kotak"). */}
           <img
             src="/images/hero-photo-v4.webp"
             alt={`${profile.name}, Web & AI Engineer`}
             className="absolute pointer-events-none select-none"
             style={{
-              width: 'clamp(200px, 27vw, 340px)',
+              width: 'clamp(190px, 26vw, 340px)',
               height: 'auto',
               left: '50%',
               bottom: '-4%',
               transform: 'translateX(-50%)',
-              filter: 'drop-shadow(0 20px 35px rgba(0,0,0,0.18))',
             }}
             width={435}
             height={276}
@@ -83,30 +100,21 @@ export default function Hero() {
           />
         </div>
 
-        {/* Baris bawah: badge availability (kiri), tagline+CTA (tengah-kiri), sosmed (kanan) */}
+        {/* Baris bawah: tagline+CTA (kiri), sosmed (kanan). items-start
+            (bukan items-end lagi) biar list sosmed nempel sejajar sama
+            headline di atas, nggak ke-dorong ke bawah pas isinya cuma
+            sedikit — sebelumnya items-end bikin list-nya keliatan "ilang"
+            karena mepet banget ke bawah, numpuk sama tombol WA floating. */}
         <div
-          className={`relative z-10 mt-8 md:mt-4 flex flex-col md:flex-row md:items-end md:justify-between gap-8 transition-all duration-700 delay-200 ${
+          className={`relative z-10 mt-10 md:mt-8 flex flex-col md:flex-row md:items-start md:justify-between gap-8 transition-all duration-700 delay-200 ${
             isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
           }`}
         >
           <div className="max-w-[440px]">
-            <div
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 mb-4"
-              style={{ background: 'rgba(59,95,227,0.08)', border: '1px solid rgba(59,95,227,0.18)' }}
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60" style={{ background: '#22C55E' }} />
-                <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: '#22C55E' }} />
-              </span>
-              <span className="text-[11px] font-semibold tracking-[0.1em] uppercase" style={{ color: '#3B5FE3' }}>
-                {t.hero.badge}
-              </span>
-            </div>
-
-            <p className="text-lg font-semibold mb-2" style={{ color: '#0F172A' }}>
+            <p className="text-lg md:text-xl font-bold mb-2" style={{ color: '#3B5FE3' }}>
               {headline || t.hero.headline}
             </p>
-            <p className="text-sm mb-5" style={{ color: '#64748B', lineHeight: 1.7 }}>
+            <p className="text-sm mb-5 line-clamp-3" style={{ color: '#64748B', lineHeight: 1.7 }}>
               {bio || t.hero.description1}
             </p>
 
@@ -114,7 +122,7 @@ export default function Hero() {
               <button
                 onClick={() => setView('projects')}
                 className="btn-bounce inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white focus-ring"
-                style={{ background: '#3B5FE3', boxShadow: '0 6px 20px rgba(59,95,227,0.35)' }}
+                style={{ background: '#3B5FE3', borderRadius: 9999, boxShadow: '0 6px 20px rgba(59,95,227,0.35)' }}
               >
                 {t.hero.ctaOrder} <ArrowUpRight size={15} />
               </button>

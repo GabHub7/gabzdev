@@ -5,4 +5,4 @@
  * kalau tanggalnya beda dari yang barusan dikirim, berarti situsnya
  * BELUM di-rebuild/deploy ulang, bukan kode-nya yang nggak berubah.
  */
-export const BUILD_VERSION = '2026-09-06 11:00 UTC — sitekey-fix-all+swipe-testimonials+order-anim+hero-v4';
+export const BUILD_VERSION = '2026-09-07 01:30 UTC — hero-fullscreen+pill-buttons+badge-in-header+no-shadow-artifact';

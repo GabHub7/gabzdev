@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Menu, X, Globe, Send } from 'lucide-react';
+import { Menu, X, Globe, ArrowUpRight } from 'lucide-react';
 import { useView } from '../context/ViewContext';
 import { useTranslation } from '../lib/i18n';
 import type { Lang } from '../context/LanguageContext';
 import Magnetic from '../components/fx/Magnetic';
+import { AvailabilityBadge } from '../components/AvailabilityBadge';
 
 
 function LanguageSwitcher() {
@@ -97,7 +98,10 @@ export default function Header({ hideWordmark = false }: { hideWordmark?: boolea
 
   return (
     <>
-      {/* Sticky, always-visible solid navbar — matches GabzStore's real header exactly */}
+      {/* Sticky, always-visible solid navbar. Nav labels (About/Packages/
+          Portfolio/Contact) sengaja dipertahankan sama kayak GabzStore
+          karena itu section yang BENERAN ada di situs ini — CTA & badge
+          gayanya di-refresh biar konsisten sama Hero (pill biru). */}
       <nav
         className="fixed top-0 left-0 right-0 z-[1000] transition-all duration-300"
         style={{
@@ -144,6 +148,8 @@ export default function Header({ hideWordmark = false }: { hideWordmark?: boolea
             </span>
           </button>
 
+          <AvailabilityBadge className="hidden lg:inline-flex" />
+
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <a
@@ -167,12 +173,11 @@ export default function Header({ hideWordmark = false }: { hideWordmark?: boolea
                 href="#footer"
                 onClick={(e) => { e.preventDefault(); scrollToAnchor('#footer'); }}
                 className="btn-bounce inline-flex items-center gap-1.5 text-sm font-semibold focus-ring"
-                style={{ background: '#0E1424', color: '#FFFFFF', padding: '11px 22px' }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = '#1E293B')}
-                onMouseLeave={(e) => (e.currentTarget.style.background = '#0E1424')}
+                style={{ background: '#3B5FE3', color: '#FFFFFF', padding: '11px 22px', borderRadius: 9999 }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = '#2F57B8')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = '#3B5FE3')}
               >
-                <Send size={13} />
-                {t.nav.letsTalk}
+                {t.nav.letsTalk} <ArrowUpRight size={14} />
               </a>
             </Magnetic>
           </div>
@@ -217,10 +222,9 @@ export default function Header({ hideWordmark = false }: { hideWordmark?: boolea
             href="#footer"
             onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); scrollToAnchor('#footer'); }}
             className="btn-bounce mt-4 inline-flex items-center gap-1.5 text-sm font-semibold focus-ring"
-            style={{ background: '#0E1424', color: '#FFFFFF', padding: '12px 24px' }}
+            style={{ background: '#3B5FE3', color: '#FFFFFF', padding: '12px 24px', borderRadius: 9999 }}
           >
-            <Send size={14} />
-            {t.nav.letsTalk}
+            {t.nav.letsTalk} <ArrowUpRight size={14} />
           </a>
         </div>
       )}
