@@ -25,14 +25,14 @@ export default function Hero() {
   }, []);
 
   return (
-    <section id="hero" className="relative overflow-hidden bg-white px-6 pb-16 pt-24 md:px-10 md:pb-20 md:pt-28">
-      <div className="mx-auto flex min-h-[calc(100dvh-7rem)] w-full max-w-[1280px] flex-col justify-center">
+    <section id="hero" className="relative min-h-[100dvh] overflow-hidden bg-white px-6 pt-24 md:px-10 md:pt-28">
+      <div className="relative mx-auto min-h-[calc(100dvh-7rem)] w-full max-w-[1280px]">
         <div className={`mb-6 flex justify-center transition-opacity duration-700 lg:hidden ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
           <AvailabilityBadge />
         </div>
 
         <div className={`relative transition-all duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-          <div className="relative flex min-h-[clamp(260px,38vw,510px)] items-end justify-center overflow-visible">
+          <div className="absolute inset-0 flex items-end justify-center overflow-visible">
             <h1
               className="hero-headline relative z-0 flex select-none items-baseline justify-center whitespace-nowrap text-[clamp(4.5rem,16vw,13.5rem)] font-bold leading-[0.82] tracking-[-0.055em]"
               aria-label={`${profile.name} Gabzdev`}
@@ -44,7 +44,7 @@ export default function Hero() {
               <span aria-hidden className="text-[#3B5FE3]">DEV</span>
             </h1>
 
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-center">
+            <div className="pointer-events-none absolute bottom-0 left-1/2 z-10 flex -translate-x-1/2 justify-center">
               <img
                 src="/images/hero-photo-v4.webp"
                 alt={`${profile.name}, Web & AI Engineer`}
@@ -58,7 +58,7 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className={`relative z-20 mt-8 flex flex-col gap-8 transition-all delay-200 duration-700 md:mt-10 md:flex-row md:items-start md:justify-between ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'}`}>
+        <div className={`absolute inset-x-0 bottom-8 z-20 flex flex-col gap-8 transition-all delay-200 duration-700 md:bottom-10 md:flex-row md:items-start md:justify-between ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'}`}>
           <div className="max-w-[460px]">
             <p className="mb-2 text-lg font-bold text-[#3B5FE3] md:text-xl">{headline || t.hero.headline}</p>
             <p className="mb-5 line-clamp-3 text-sm leading-7 text-slate-500">{bio || t.hero.description1}</p>
