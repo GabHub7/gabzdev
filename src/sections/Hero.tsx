@@ -42,7 +42,19 @@ export default function Hero() {
           <span aria-hidden className="text-[#3B5FE3]">DEV</span>
         </h1>
 
-        <div className={`relative z-20 mb-6 flex w-full flex-col gap-8 transition-all delay-200 duration-700 md:mb-8 md:flex-row md:items-end md:justify-between ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'}`}>
+        <div className={`relative z-10 flex shrink-0 items-end justify-center transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'}`}>
+          <img
+            src="/images/hero-photo-v4.webp"
+            alt={`${profile.name}, Web & AI Engineer`}
+            className="h-auto w-[320px] select-none object-contain object-bottom sm:w-[420px]"
+            width={435}
+            height={276}
+            fetchPriority="high"
+            draggable={false}
+          />
+        </div>
+
+        <div className={`relative z-20 mt-6 flex w-full flex-col gap-8 transition-all delay-200 duration-700 md:mt-8 md:flex-row md:items-start md:justify-between ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'}`}>
           <div className="max-w-[460px]">
             <p className="mb-2 text-lg font-bold text-[#3B5FE3] md:text-xl">{headline || t.hero.headline}</p>
             <p className="mb-5 line-clamp-3 text-sm leading-7 text-slate-500">{bio || t.hero.description1}</p>
@@ -68,18 +80,6 @@ export default function Hero() {
               ))}
             </ul>
           )}
-        </div>
-
-        <div className={`relative z-10 flex shrink-0 items-end justify-center transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'}`}>
-          <img
-            src="/images/hero-photo-v4.webp"
-            alt={`${profile.name}, Web & AI Engineer`}
-            className="h-auto w-[320px] select-none object-contain object-bottom sm:w-[420px]"
-            width={435}
-            height={276}
-            fetchPriority="high"
-            draggable={false}
-          />
         </div>
       </div>
     </section>
