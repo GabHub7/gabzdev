@@ -1,236 +1,235 @@
-import { useMemo, useRef, useState } from 'react';
-import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion';
-import { ArrowUpRight, Github } from 'lucide-react';
+import { useMemo } from 'react';
+import { ArrowUpRight, Github, ExternalLink } from 'lucide-react';
+import { useView } from '../context/ViewContext';
 import { useTranslation } from '../lib/i18n';
 import { useProjects, useSocial } from '../lib/queries';
 import { mapDashProjects, type Project } from '../components/ProjectShared';
 import FadeUp from '../components/fx/FadeUp';
 
 /**
- * Portfolio — niru persis pola flaid.my.id: SATU proyek besar penuh layar
- * per "slot" scroll, scroll vertikal biasa yang dorong transisi (crossfade)
- * ke proyek berikutnya, bukan grid/carousel drag manual.
+ * Portfolio — "Sticky Stacking Cards" beneran, niru referensi flaid.my.id:
+ * tiap proyek nge-pin (sticky) di posisi yang SAMA (top:0), z-index naik
+ * per index, jadi pas proyek berikutnya scroll naik dari bawah dia
+ * NUTUPIN proyek sebelumnya yang lagi diem — scroll ke bawah numpuk,
+ * scroll ke atas kepisah lagi (karena sticky itu native browser behavior,
+ * bukan animasi satu-arah).
  *
- * Mekanisme: wrapper luar tingginya = jumlah_proyek × 120vh (biar tiap
- * proyek dapet "jatah" scroll yang cukup buat dibaca sebelum ganti).
- * Bagian dalam sticky, scrollYProgress dipetakan ke activeIndex proyek
- * mana yang lagi aktif — AnimatePresence yang handle crossfade-nya.
+ * Beda sama versi paling awal (yang di-drop krn dikira bug): versi lama
+ * cuma nge-crossfade SATU kartu doang (nggak ada kartu lain yang ikut
+ * kelihatan sama sekali), makanya kesannya "cuma muncul 1". Versi ini
+ * proyek SEBELUMNYA tetap nempel di belakang selama transisi — itu yang
+ * bikin efek "numpuk"-nya kerasa.
  *
- * Ditutup dengan listing "proyek lainnya" (proyek yang nggak pinned) +
- * link GitHub, persis kayak penutup "THAT'S THE HIGHLIGHT REEL" di flaid.
+ * Cuma di-stack buat N proyek unggulan (biar homepage nggak jadi sepanjang
+ * jumlah_proyek x 130vh kalau proyeknya puluhan) — sisanya diarahin ke
+ * "View All Projects" (grid biasa) di penutup.
  */
+const STACK_LIMIT = 6;
+const SLOT_VH = 130; // tinggi "jatah scroll" per kartu, dalam vh
+
 export default function Portfolio() {
+  const { setView } = useView();
   const { t } = useTranslation();
   const { projects: stored } = useProjects('gabzdev');
   const social = useSocial();
   const allProjects = useMemo<Project[]>(() => mapDashProjects(stored), [stored]);
 
   const pinnedProjects = allProjects.filter((p) => p.isPinned);
-  const featured = pinnedProjects.length > 0 ? pinnedProjects : allProjects;
-  const otherProjects = allProjects.filter((p) => !featured.includes(p));
-
-  const targetRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: targetRef, offset: ['start start', 'end end'] });
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  useMotionValueEvent(scrollYProgress, 'change', (v) => {
-    if (featured.length === 0) return;
-    const idx = Math.min(featured.length - 1, Math.floor(v * featured.length));
-    setActiveIndex(idx);
-  });
-
-  const project = featured[activeIndex];
-  const canPin = featured.length >= 2;
+  const featuredAll = pinnedProjects.length > 0 ? pinnedProjects : allProjects;
+  const stack = featuredAll.slice(0, STACK_LIMIT);
+  const hasMore = allProjects.length > stack.length;
+  const canStack = stack.length >= 2;
 
   return (
-    <section id="portfolio" className="relative" style={{ background: '#FFFFFF' }}>
-      <div className="pt-20 md:pt-24 px-6 md:px-10 max-w-[1200px] mx-auto">
+    <section id="portfolio" className="relative" style={{ background: '#0A0F1C' }}>
+      <div className="pt-20 md:pt-24 pb-10 px-6 md:px-10 max-w-[1200px] mx-auto">
         <FadeUp>
-          <p className="text-sm font-semibold tracking-[0.1em] uppercase mb-3" style={{ color: '#3B5FE3' }}>
+          <p className="text-sm font-semibold tracking-[0.1em] uppercase mb-3" style={{ color: '#7BA1EC' }}>
             // {t.portfolio.label}
           </p>
-          <h2 className="font-bold mb-8" style={{ fontSize: 'clamp(28px,3.5vw,48px)', color: '#0F172A', lineHeight: 1.15 }}>
+          <h2 className="font-bold" style={{ fontSize: 'clamp(28px,3.5vw,48px)', color: '#FFFFFF', lineHeight: 1.15 }}>
             {t.portfolio.title}
           </h2>
         </FadeUp>
       </div>
 
-      {featured.length === 0 ? (
-        <div className="max-w-[1200px] mx-auto px-6 md:px-10 py-16 text-center" style={{ color: '#94A3B8' }}>
+      {stack.length === 0 ? (
+        <div className="max-w-[1200px] mx-auto px-6 md:px-10 py-16 text-center" style={{ color: '#64748B' }}>
           {t.portfolio.empty}
         </div>
-      ) : canPin ? (
-        <div ref={targetRef} style={{ height: `${featured.length * 120}vh` }}>
-          <div className="sticky top-0 flex items-center overflow-hidden" style={{ height: '100dvh' }}>
-            <div className="max-w-[1200px] mx-auto px-6 md:px-10 w-full">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={project.id}
-                  initial={{ opacity: 0, filter: 'blur(6px)' }}
-                  animate={{ opacity: 1, filter: 'blur(0px)' }}
-                  exit={{ opacity: 0, filter: 'blur(6px)' }}
-                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                  className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center"
-                >
-                  <div
-                    className="overflow-hidden"
-                    style={{ aspectRatio: '16/10', border: '1px solid #E2E8F0' }}
-                  >
-                    <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
-                  </div>
-
-                  <div>
-                    <p className="text-sm font-mono mb-2" style={{ color: '#94A3B8' }}>
-                      {String(activeIndex + 1).padStart(2, '0')}
-                    </p>
-                    <h3 className="font-bold mb-3" style={{ fontSize: 'clamp(24px,3vw,36px)', color: '#0F172A' }}>
-                      {project.title}
-                    </h3>
-
-                    {project.highlights.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {project.highlights.map((h) => (
-                          <span
-                            key={h}
-                            className="text-xs font-semibold px-3 py-1"
-                            style={{ background: '#0F172A', color: '#FFFFFF' }}
-                          >
-                            {h}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-                    <p className="text-sm mb-5" style={{ color: '#64748B', lineHeight: 1.7 }}>
-                      {project.description}
-                    </p>
-
-                    {project.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-6">
-                        {project.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="text-xs font-medium px-2.5 py-1"
-                            style={{ border: '1px solid #E2E8F0', color: '#334155' }}
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-                    <div className="flex flex-wrap gap-3">
-                      {project.liveLink && (
-                        <a
-                          href={project.liveLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="btn-bounce inline-flex items-center gap-1.5 text-sm font-semibold px-5 py-2.5 focus-ring"
-                          style={{ background: '#0F172A', color: '#FFFFFF' }}
-                        >
-                          {t.portfolio.caseStudy} <ArrowUpRight size={14} />
-                        </a>
-                      )}
-                      {project.demoUrl && (
-                        <a
-                          href={project.demoUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="btn-bounce inline-flex items-center gap-1.5 text-sm font-semibold px-5 py-2.5 focus-ring"
-                          style={{ border: '1px solid #0F172A', color: '#0F172A' }}
-                        >
-                          {t.portfolio.liveDemo} <ArrowUpRight size={14} />
-                        </a>
-                      )}
-                      {project.repoUrl && (
-                        <a
-                          href={project.repoUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="btn-bounce inline-flex items-center gap-1.5 text-sm font-semibold px-5 py-2.5 focus-ring"
-                          style={{ border: '1px solid #E2E8F0', color: '#64748B' }}
-                        >
-                          <Github size={14} /> {t.portfolio.repository}
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
+      ) : canStack ? (
+        <div className="relative" style={{ height: `${stack.length * SLOT_VH}vh` }}>
+          {stack.map((project, i) => (
+            <div
+              key={project.id}
+              className="sticky top-0 flex items-center overflow-hidden"
+              style={{ height: '100dvh', zIndex: i + 1, background: STACK_BG[i % STACK_BG.length] }}
+            >
+              <StackedCard project={project} index={i} total={stack.length} t={t} />
             </div>
-
-            {/* Indikator progress proyek (titik-titik) */}
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2">
-              {featured.map((p, i) => (
-                <span
-                  key={p.id}
-                  className="transition-all duration-300"
-                  style={{
-                    width: i === activeIndex ? 20 : 6,
-                    height: 6,
-                    background: i === activeIndex ? '#3B5FE3' : '#E2E8F0',
-                  }}
-                />
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
       ) : (
-        // Cuma 1 proyek — nggak perlu di-pin, tampil statis aja
-        <div className="max-w-[1200px] mx-auto px-6 md:px-10 pb-20">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-            <div className="overflow-hidden" style={{ aspectRatio: '16/10', border: '1px solid #E2E8F0' }}>
-              <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
-            </div>
-            <div>
-              <h3 className="font-bold mb-3" style={{ fontSize: 'clamp(24px,3vw,36px)', color: '#0F172A' }}>
-                {project.title}
-              </h3>
-              <p className="text-sm mb-5" style={{ color: '#64748B', lineHeight: 1.7 }}>
-                {project.description}
-              </p>
-              {project.liveLink && (
-                <a
-                  href={project.liveLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-bounce inline-flex items-center gap-1.5 text-sm font-semibold px-5 py-2.5 focus-ring"
-                  style={{ background: '#0F172A', color: '#FFFFFF' }}
-                >
-                  {t.portfolio.caseStudy} <ArrowUpRight size={14} />
-                </a>
-              )}
-            </div>
-          </div>
+        // Cuma 1 proyek — nggak ada yang di-stack, tampil statis aja
+        <div className="relative flex items-center" style={{ minHeight: '90dvh', background: STACK_BG[0] }}>
+          <StackedCard project={stack[0]} index={0} total={1} t={t} />
         </div>
       )}
 
-      {/* Penutup — "proyek lainnya" + link GitHub */}
-      {(otherProjects.length > 0 || social.github) && (
-        <FadeUp>
-          <div style={{ background: '#0A0F1C' }} className="py-20 px-6 text-center">
-            <p className="text-2xl md:text-3xl font-bold mb-6" style={{ color: '#FFFFFF' }}>
-              {t.portfolio.thatsIt}
-            </p>
-            {otherProjects.length > 0 && (
-              <p className="text-sm mb-6 max-w-[500px] mx-auto" style={{ color: '#94A3B8', lineHeight: 1.8 }}>
-                {t.portfolio.otherProjects}: {otherProjects.map((p) => p.title).join(' · ')}
-              </p>
-            )}
-            {social.github && (
+      {/* Penutup: sisanya diarahin ke grid "View All" + link GitHub */}
+      <div className="py-16 md:py-20 px-6 text-center" style={{ background: '#0A0F1C' }}>
+        {hasMore && (
+          <button
+            onClick={() => setView('projects')}
+            className="btn-bounce inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold focus-ring mb-5"
+            style={{ border: '1px solid rgba(255,255,255,0.25)', color: '#FFFFFF', borderRadius: 9999 }}
+          >
+            {t.portfolio.viewAll} ({allProjects.length}) <ArrowUpRight size={15} />
+          </button>
+        )}
+        {social.github && (
+          <div>
+            <a
+              href={`https://github.com/${social.github}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm font-semibold underline focus-ring"
+              style={{ color: '#7BA1EC' }}
+            >
+              <Github size={15} /> {t.portfolio.moreOnGithub}
+            </a>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// Background gelap gantian per kartu biar transisi antar-stack kerasa beda,
+// nggak monoton satu warna doang — semuanya tetep OPAQUE (bukan
+// transparan) biar beneran nutupin kartu di belakangnya, bukan numpuk
+// transparan yang malah keliatan berantakan.
+const STACK_BG = ['#0A0F1C', '#111827', '#0F1729', '#151E32'];
+
+function StackedCard({
+  project,
+  index,
+  total,
+  t,
+}: {
+  project: Project;
+  index: number;
+  total: number;
+  t: ReturnType<typeof useTranslation>['t'];
+}) {
+  return (
+    <div className="max-w-[1200px] mx-auto px-6 md:px-10 w-full grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+      <FadeUp className="overflow-hidden order-2 lg:order-1" style={{ aspectRatio: '16/10', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 12 }} threshold={0.35}>
+        <img src={project.image} alt={project.title} className="w-full h-full object-cover" loading={index === 0 ? 'eager' : 'lazy'} />
+      </FadeUp>
+
+      <div className="order-1 lg:order-2">
+        <FadeUp threshold={0.35}>
+          <p className="text-sm font-mono mb-2" style={{ color: '#64748B' }}>
+            {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
+          </p>
+        </FadeUp>
+
+        <FadeUp threshold={0.35} delay={80}>
+          <h3 className="font-bold mb-3" style={{ fontSize: 'clamp(24px,3vw,40px)', color: '#FFFFFF' }}>
+            {project.title}
+          </h3>
+        </FadeUp>
+
+        {project.highlights.length > 0 && (
+          <FadeUp threshold={0.35} delay={160}>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {project.highlights.map((h) => (
+                <span key={h} className="text-xs font-semibold px-3 py-1" style={{ background: 'rgba(255,255,255,0.1)', color: '#FFFFFF', borderRadius: 999 }}>
+                  {h}
+                </span>
+              ))}
+            </div>
+          </FadeUp>
+        )}
+
+        <FadeUp threshold={0.35} delay={240}>
+          <p className="text-sm mb-5" style={{ color: '#94A3B8', lineHeight: 1.7 }}>
+            {project.description}
+          </p>
+        </FadeUp>
+
+        {project.tags.length > 0 && (
+          <FadeUp threshold={0.35} delay={320}>
+            <div className="flex flex-wrap gap-2 mb-6">
+              {project.tags.map((tag) => (
+                <span key={tag} className="text-xs font-medium px-2.5 py-1" style={{ border: '1px solid rgba(255,255,255,0.15)', color: '#CBD5E1', borderRadius: 999 }}>
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </FadeUp>
+        )}
+
+        <FadeUp threshold={0.35} delay={400}>
+          <div className="flex flex-wrap gap-3">
+            {project.liveLink && project.liveLink !== '#' && (
               <a
-                href={`https://github.com/${social.github}`}
+                href={project.liveLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm font-semibold underline focus-ring"
-                style={{ color: '#7BA1EC' }}
+                data-cursor
+                className="btn-bounce inline-flex items-center gap-1.5 text-sm font-semibold px-5 py-2.5 focus-ring"
+                style={{ background: '#3B5FE3', color: '#FFFFFF', borderRadius: 9999 }}
               >
-                <Github size={16} /> {t.portfolio.moreOnGithub}
+                {t.portfolio.caseStudy} <ExternalLink size={14} />
+              </a>
+            )}
+            {project.demoUrl && (
+              <a
+                href={project.demoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-cursor
+                className="btn-bounce inline-flex items-center gap-1.5 text-sm font-semibold px-5 py-2.5 focus-ring"
+                style={{ border: '1px solid rgba(255,255,255,0.3)', color: '#FFFFFF', borderRadius: 9999 }}
+              >
+                {t.portfolio.liveDemo} <ArrowUpRight size={14} />
+              </a>
+            )}
+            {project.repoUrl && (
+              <a
+                href={project.repoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-cursor
+                className="btn-bounce inline-flex items-center gap-1.5 text-sm font-semibold px-5 py-2.5 focus-ring"
+                style={{ border: '1px solid rgba(255,255,255,0.15)', color: '#94A3B8', borderRadius: 9999 }}
+              >
+                <Github size={14} /> {t.portfolio.repository}
               </a>
             )}
           </div>
         </FadeUp>
-      )}
-    </section>
+
+        {/* Indikator posisi dalam stack (titik-titik) */}
+        <FadeUp threshold={0.35} delay={480}>
+          <div className="flex items-center gap-2 mt-8">
+            {Array.from({ length: total }).map((_, i) => (
+              <span
+                key={i}
+                style={{
+                  width: i === index ? 20 : 6,
+                  height: 6,
+                  borderRadius: 999,
+                  background: i === index ? '#3B5FE3' : 'rgba(255,255,255,0.2)',
+                  transition: 'all 0.3s ease',
+                }}
+              />
+            ))}
+          </div>
+        </FadeUp>
+      </div>
+    </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useScrollReveal } from '../hooks/useScrollReveal';
+import FadeUp from '../components/fx/FadeUp';
 import { useTranslation } from '../lib/i18n';
 import { useSocial, usePackages } from '../lib/queries';
 import { Star, Check, ArrowRight, Flame, X } from 'lucide-react';
@@ -93,7 +93,7 @@ function PackageDetailModal({ pkg, orderLink, t, onClose }: { pkg: PackageItem; 
           <ul className="flex flex-col gap-2.5 mb-6">
             {pkg.features.map((feat) => (
               <li key={feat} className="flex items-start gap-2.5 text-sm" style={{ color: '#334155' }}>
-                <Check size={16} style={{ color: '#4F7FE0', flexShrink: 0, marginTop: 2 }} />
+                <Check size={16} style={{ color: '#3B5FE3', flexShrink: 0, marginTop: 2 }} />
                 {feat}
               </li>
             ))}
@@ -130,17 +130,17 @@ function PackageCard({ pkg, orderLink, t, onViewDetail }: { pkg: PackageItem; or
   return (
     <SpotlightCard
       className="overflow-hidden transition-transform duration-300 hover:-translate-y-1.5"
-      spotlightColor={pkg.is_popular ? 'rgba(79,127,224,0.4)' : 'rgba(79,127,224,0.25)'}
+      spotlightColor={pkg.is_popular ? 'rgba(59, 95, 227,0.4)' : 'rgba(59, 95, 227,0.25)'}
       style={{
         background: '#FFFFFF',
-        boxShadow: pkg.is_popular ? '0 16px 40px rgba(79,127,224,0.18)' : 'none',
+        boxShadow: pkg.is_popular ? '0 16px 40px rgba(59, 95, 227,0.18)' : 'none',
         border: pkg.is_popular ? '2px solid #3B5FE3' : '1px solid #0F172A',
       }}
     >
       {pkg.is_popular && (
         <div
           className="absolute top-0 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold z-10"
-          style={{ background: '#4F7FE0', color: '#FFFFFF' }}
+          style={{ background: '#3B5FE3', color: '#FFFFFF' }}
         >
           <Flame size={13} /> {t.packages.popular}
         </div>
@@ -167,7 +167,7 @@ function PackageCard({ pkg, orderLink, t, onViewDetail }: { pkg: PackageItem; or
         <ul className="flex flex-col gap-2.5 mb-2">
           {teaser.map((feat) => (
             <li key={feat} className="flex items-start gap-2.5 text-sm" style={{ color: '#334155' }}>
-              <Check size={16} style={{ color: '#4F7FE0', flexShrink: 0, marginTop: 2 }} />
+              <Check size={16} style={{ color: '#3B5FE3', flexShrink: 0, marginTop: 2 }} />
               {feat}
             </li>
           ))}
@@ -178,7 +178,7 @@ function PackageCard({ pkg, orderLink, t, onViewDetail }: { pkg: PackageItem; or
             type="button"
             onClick={onViewDetail}
             className="text-left text-sm font-semibold mb-4 focus-ring"
-            style={{ color: '#4F7FE0' }}
+            style={{ color: '#3B5FE3' }}
           >
             +{remaining} fitur lainnya — Lihat Detail
           </button>
@@ -207,7 +207,6 @@ function PackageCard({ pkg, orderLink, t, onViewDetail }: { pkg: PackageItem; or
 
 export default function Packages() {
   const { t } = useTranslation();
-  const { ref, isVisible } = useScrollReveal(0.1);
   const social = useSocial();
   const { packages, isLoading } = usePackages();
   const waNumber = (social.whatsapp || '08811494688').replace(/^0/, '62');
@@ -250,42 +249,46 @@ export default function Packages() {
 
   return (
     <section id="packages" className="relative py-20 md:py-24" style={{ background: '#FFFFFF' }}>
-      <div
-        ref={ref}
-        className={`max-w-[1100px] mx-auto px-6 transition-all duration-700 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-        }`}
-        style={{ transitionTimingFunction: 'cubic-bezier(0.16,1,0.3,1)' }}
-      >
+      <div className="max-w-[1100px] mx-auto px-6">
         <div className="text-center max-w-[620px] mx-auto mb-12">
-          <p className="text-sm font-semibold tracking-[0.1em] uppercase mb-3" style={{ color: '#3B5FE3' }}>
-            {t.packages.label}
-          </p>
-          <h2 className="font-bold mb-4" style={{ fontSize: 'clamp(28px,3.5vw,48px)', color: '#0F172A', lineHeight: 1.2 }}>
-            {t.packages.title}
-          </h2>
-          <p className="text-base" style={{ color: '#64748B', lineHeight: 1.7 }}>
-            {t.packages.subtitle}
-          </p>
+          <FadeUp threshold={0.2}>
+            <p className="text-sm font-semibold tracking-[0.1em] uppercase mb-3" style={{ color: '#3B5FE3' }}>
+              {t.packages.label}
+            </p>
+          </FadeUp>
+          <FadeUp threshold={0.2} delay={80}>
+            <h2 className="font-bold mb-4" style={{ fontSize: 'clamp(28px,3.5vw,48px)', color: '#0F172A', lineHeight: 1.2 }}>
+              {t.packages.title}
+            </h2>
+          </FadeUp>
+          <FadeUp threshold={0.2} delay={160}>
+            <p className="text-base" style={{ color: '#64748B', lineHeight: 1.7 }}>
+              {t.packages.subtitle}
+            </p>
+          </FadeUp>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
-          {items.map((pkg) => (
-            <PackageCard key={pkg.id} pkg={pkg} orderLink={orderLink} t={t} onViewDetail={() => setDetailPkg(pkg)} />
+          {items.map((pkg, i) => (
+            <FadeUp key={pkg.id} threshold={0.15} delay={i * 120} className="h-full">
+              <PackageCard pkg={pkg} orderLink={orderLink} t={t} onViewDetail={() => setDetailPkg(pkg)} />
+            </FadeUp>
           ))}
         </div>
 
-        <div className="text-center mt-8">
-          <a
-            href={import.meta.env.VITE_GABZSTORE_URL || 'https://gabzstore.web.id'}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold focus-ring"
-            style={{ color: '#3B5FE3' }}
-          >
-            Lihat paket lengkap <ArrowRight size={15} />
-          </a>
-        </div>
+        <FadeUp threshold={0.2} delay={items.length * 120}>
+          <div className="text-center mt-8">
+            <a
+              href={import.meta.env.VITE_GABZSTORE_URL || 'https://gabzstore.web.id'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold focus-ring"
+              style={{ color: '#3B5FE3' }}
+            >
+              Lihat paket lengkap <ArrowRight size={15} />
+            </a>
+          </div>
+        </FadeUp>
       </div>
 
       {detailPkg && (

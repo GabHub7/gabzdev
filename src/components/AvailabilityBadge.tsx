@@ -12,7 +12,7 @@ export function AvailabilityBadge({ className = '' }: { className?: string }) {
   return (
     <div
       className={`inline-flex items-center gap-2 px-3.5 py-1.5 ${className}`}
-      style={{ background: 'rgba(59,95,227,0.08)', border: '1px solid rgba(59,95,227,0.18)', borderRadius: 9999 }}
+      style={{ background: 'rgba(59, 95, 227,0.08)', border: '1px solid rgba(59, 95, 227,0.18)', borderRadius: 9999 }}
     >
       <span className="relative flex h-2 w-2">
         <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60" style={{ background: '#22C55E' }} />

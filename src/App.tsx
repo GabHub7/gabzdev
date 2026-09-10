@@ -8,6 +8,7 @@ import Hero from './sections/Hero';
 import Packages from './sections/Packages';
 import About from './sections/About';
 import Footer from './sections/Footer';
+import CustomCursor from './components/CustomCursor';
 
 // Section di bawah fold — lazy supaya bundle awal (LCP) tetap kecil.
 // Struktur baru (5 section + skill stack): Hero -> SkillsCarousel -> About
@@ -98,7 +99,8 @@ export default function App() {
           {introVisible && <LoadingScreen key="intro" onDone={finishIntro} />}
         </AnimatePresence>
         <ScrollProgress />
-        {(view === 'portfolio' || view === 'projects') && <Header hideWordmark={introVisible} />}
+        {(view === 'portfolio' || view === 'projects') && <CustomCursor />}
+        {(view === 'portfolio' || view === 'projects') && <Header />}
         {(view === 'portfolio' || view === 'projects') && <WhatsAppFloating />}
         <SmoothScrollGate view={view}>
         <div key={view} className="animate-view-in">
@@ -106,12 +108,25 @@ export default function App() {
             <div className="relative min-h-[100dvh]">
               <div className="relative z-10">
                 <main>
-                  {/* Fold pertama — eager, jadi LCP cepat */}
-                  <Hero />
+                  {/* Fold pertama — eager, jadi LCP cepat.
+                      Efek "kartu numpuk": Hero di-pin (sticky) selama extra
+                      scroll-room di wrapper luar (100dvh ekstra di atas
+                      tinggi Hero sendiri), sementara SkillsCarousel (section
+                      abisnya, z-index lebih tinggi + background solid)
+                      geser naik dari bawah nutupin Hero yang lagi nge-pin.
+                      Sengaja CUMA section 1->2 -- section-section lain
+                      tetap scroll normal biasa. */}
+                  <div className="relative" style={{ height: 'calc(100dvh + 60vh)' }}>
+                    <div className="sticky top-0" style={{ zIndex: 0 }}>
+                      <Hero />
+                    </div>
+                  </div>
                   {/* Di bawah fold — lazy. Fallback dikasih minHeight supaya
                       layout nggak "jumping" pas chunk masuk (CLS = 0). */}
                   <Suspense fallback={<div style={{ minHeight: 200 }} />}>
-                    <SkillsCarousel />
+                    <div className="relative" style={{ zIndex: 10 }}>
+                      <SkillsCarousel />
+                    </div>
                   </Suspense>
                   <About />
                   <Packages />

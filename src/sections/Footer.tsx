@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ArrowUp, Star, MessageCircle, ChevronUp, ChevronDown } from 'lucide-react';
 import { useScrollReveal } from '../hooks/useScrollReveal';
+import FadeUp from '../components/fx/FadeUp';
 import { useView } from '../context/ViewContext';
 import { useTranslation } from '../lib/i18n';
 import { useSocial, useSocialIcons, useProfile, useTestimonials } from '../lib/queries';
@@ -22,7 +22,7 @@ function withMinSlides<T>(items: T[]): T[] {
 
 /** Font yang gantian dipakai buat kata "Order" di judul "Order? Contact
  * Us." — murni efek visual (nunjukin variasi tipografi), teksnya sendiri
- * tetap sama, cuma font-family-nya yang di-cycle otomatis tiap ~1.3 detik. */
+ * tetap sama, cuma font-family-nya yang di-cycle cepet (~flicker) terus. */
 const ORDER_FONTS = [
   "'Poppins', sans-serif",
   "'Anton', sans-serif",
@@ -31,10 +31,12 @@ const ORDER_FONTS = [
   "'Bebas Neue', sans-serif",
   "'Space Mono', monospace",
 ];
-const ORDER_INTERVAL_MS = 1300;
+const ORDER_INTERVAL_MS = 60;
 
 function AnimatedTitle({ text }: { text: string }) {
   const [fontIndex, setFontIndex] = useState(0);
+  const measureRef = useRef<HTMLSpanElement>(null);
+  const [lockedWidth, setLockedWidth] = useState<number | null>(null);
 
   useEffect(() => {
     const id = setInterval(() => setFontIndex((i) => (i + 1) % ORDER_FONTS.length), ORDER_INTERVAL_MS);
@@ -42,27 +44,55 @@ function AnimatedTitle({ text }: { text: string }) {
   }, []);
 
   const idx = text.indexOf('Order');
+  const word = idx === -1 ? '' : text.slice(idx, idx + 'Order'.length);
+
+  // Ukur lebar kata "Order" di SEMUA font sekali (pakai satu node yang
+  // font-family-nya diganti-ganti cepet lewat rAF, bukan bikin 6 node
+  // sekaligus), ambil yang paling lebar, kunci jadi minWidth container-nya.
+  // Ini yang bikin "Contact Us" abis dia nggak ikut geser tiap font ganti.
+  useEffect(() => {
+    if (!word || !measureRef.current) return;
+    const probe = measureRef.current;
+    let max = 0;
+    let i = 0;
+    const measureNext = () => {
+      if (i >= ORDER_FONTS.length) {
+        setLockedWidth(Math.ceil(max));
+        return;
+      }
+      probe.style.fontFamily = ORDER_FONTS[i];
+      max = Math.max(max, probe.getBoundingClientRect().width);
+      i += 1;
+      requestAnimationFrame(measureNext);
+    };
+    // Tunggu web font kepakai dulu (kalau belum ready, lebarnya bisa keukur
+    // pake fallback font -> hasil ukur ngaco), baru mulai ukur.
+    document.fonts.ready.then(() => requestAnimationFrame(measureNext));
+  }, [word]);
+
   if (idx === -1) return <>{text}</>;
   const before = text.slice(0, idx);
-  const word = text.slice(idx, idx + 'Order'.length);
   const after = text.slice(idx + 'Order'.length);
 
   return (
     <>
       {before}
-      <span style={{ display: 'inline-grid', verticalAlign: 'bottom' }}>
-        <AnimatePresence mode="wait">
-          <motion.span
-            key={fontIndex}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
-            style={{ fontFamily: ORDER_FONTS[fontIndex], gridArea: '1 / 1' }}
-          >
-            {word}
-          </motion.span>
-        </AnimatePresence>
+      <span
+        className="relative inline-block align-bottom"
+        style={{ width: lockedWidth ?? undefined, textAlign: 'center' }}
+      >
+        <span style={{ fontFamily: ORDER_FONTS[fontIndex] }}>{word}</span>
+        {/* Probe tersembunyi buat ngukur lebar tiap font — di-render tapi
+            nggak keliatan (absolute + opacity:0), size/weight/tracking-nya
+            HARUS sama kayak teks aslinya biar hasil ukurnya akurat. */}
+        <span
+          ref={measureRef}
+          aria-hidden
+          className="absolute left-0 top-0 pointer-events-none"
+          style={{ opacity: 0, whiteSpace: 'nowrap' }}
+        >
+          {word}
+        </span>
       </span>
       {after}
     </>
@@ -150,48 +180,58 @@ export default function Footer() {
         <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-12 items-start">
           {/* KIRI — headline besar + ikon kontak */}
           <div>
-            <p className="text-sm font-semibold tracking-[0.1em] uppercase mb-3" style={{ color: '#3B5FE3' }}>
-              {t.contact.label}
-            </p>
-            <h2
-              className="font-bold mb-3"
-              style={{ fontSize: 'clamp(36px, 5.5vw, 64px)', lineHeight: 1.05, color: '#0F172A' }}
-            >
-              <AnimatedTitle text={t.contact.title} />
-            </h2>
-            <p className="text-sm mb-8" style={{ color: '#64748B' }}>
-              {t.contact.clickToOrder}
-            </p>
+            <FadeUp threshold={0.2}>
+              <p className="text-sm font-semibold tracking-[0.1em] uppercase mb-3" style={{ color: '#3B5FE3' }}>
+                {t.contact.label}
+              </p>
+            </FadeUp>
+            <FadeUp threshold={0.2} delay={80}>
+              <h2
+                className="font-bold mb-3"
+                style={{ fontSize: 'clamp(36px, 5.5vw, 64px)', lineHeight: 1.05, color: '#0F172A' }}
+              >
+                <AnimatedTitle text={t.contact.title} />
+              </h2>
+            </FadeUp>
+            <FadeUp threshold={0.2} delay={160}>
+              <p className="text-sm mb-8" style={{ color: '#64748B' }}>
+                {t.contact.clickToOrder}
+              </p>
+            </FadeUp>
 
-            <div className="flex flex-wrap gap-3">
-              {waHref && (
-                <a
-                  href={waHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-bounce flex flex-col items-center justify-center gap-2 w-24 h-24 focus-ring"
-                  style={{ border: '1px solid #0F172A' }}
-                  aria-label="WhatsApp"
-                >
-                  <MessageCircle size={22} style={{ color: '#0F172A' }} />
-                  <span className="text-xs font-semibold" style={{ color: '#0F172A' }}>WhatsApp</span>
-                </a>
-              )}
-              {socialIcons.map((s) => (
-                <a
-                  key={s.id}
-                  href={s.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-bounce flex flex-col items-center justify-center gap-2 w-24 h-24 focus-ring"
-                  style={{ border: '1px solid #0F172A' }}
-                  aria-label={s.label}
-                >
-                  <SocialGlyph label={s.label} iconUrl={s.icon_url} size={22} color="#0F172A" />
-                  <span className="text-xs font-semibold" style={{ color: '#0F172A' }}>{s.label}</span>
-                </a>
-              ))}
-            </div>
+            <FadeUp threshold={0.2} delay={240}>
+              <div className="flex flex-wrap gap-3">
+                {waHref && (
+                  <a
+                    href={waHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-cursor
+                    className="btn-bounce flex flex-col items-center justify-center gap-2 w-24 h-24 focus-ring"
+                    style={{ border: '1px solid #0F172A' }}
+                    aria-label="WhatsApp"
+                  >
+                    <MessageCircle size={22} style={{ color: '#0F172A' }} />
+                    <span className="text-xs font-semibold" style={{ color: '#0F172A' }}>WhatsApp</span>
+                  </a>
+                )}
+                {socialIcons.map((s) => (
+                  <a
+                    key={s.id}
+                    href={s.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-cursor
+                    className="btn-bounce flex flex-col items-center justify-center gap-2 w-24 h-24 focus-ring"
+                    style={{ border: '1px solid #0F172A' }}
+                    aria-label={s.label}
+                  >
+                    <SocialGlyph label={s.label} iconUrl={s.icon_url} size={22} color="#0F172A" />
+                    <span className="text-xs font-semibold" style={{ color: '#0F172A' }}>{s.label}</span>
+                  </a>
+                ))}
+              </div>
+            </FadeUp>
           </div>
 
           {/* KANAN — panel testimoni: embla carousel vertikal, bisa di-swipe

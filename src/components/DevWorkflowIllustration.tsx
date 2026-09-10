@@ -39,11 +39,11 @@ export default function DevWorkflowIllustration({ className }: { className?: str
       `}</style>
 
       {/* Soft ground shadow */}
-      <ellipse cx="210" cy="330" rx="150" ry="18" fill="#4F7FE0" opacity="0.08" />
+      <ellipse cx="210" cy="330" rx="150" ry="18" fill="#3B5FE3" opacity="0.08" />
 
       {/* Orbiting accent dot */}
       <g className="dwi-orbit">
-        <circle cx="210" cy="60" r="5" fill="#4F7FE0" opacity="0.5" />
+        <circle cx="210" cy="60" r="5" fill="#3B5FE3" opacity="0.5" />
       </g>
 
       {/* Laptop base */}
@@ -58,11 +58,11 @@ export default function DevWorkflowIllustration({ className }: { className?: str
         <circle cx="158" cy="110" r="2.5" fill="#10B981" />
 
         {/* Code lines */}
-        <rect x="140" y="122" width="70" height="5" rx="2.5" fill="#4F7FE0" opacity="0.75" />
+        <rect x="140" y="122" width="70" height="5" rx="2.5" fill="#3B5FE3" opacity="0.75" />
         <rect x="140" y="133" width="95" height="5" rx="2.5" fill="#94A3B8" opacity="0.6" />
-        <rect x="140" y="144" width="55" height="5" rx="2.5" fill="#4F7FE0" opacity="0.5" />
+        <rect x="140" y="144" width="55" height="5" rx="2.5" fill="#3B5FE3" opacity="0.5" />
         <rect x="140" y="155" width="80" height="5" rx="2.5" fill="#94A3B8" opacity="0.6" />
-        <rect x="140" y="166" width="40" height="5" rx="2.5" fill="#4F7FE0" opacity="0.75" />
+        <rect x="140" y="166" width="40" height="5" rx="2.5" fill="#3B5FE3" opacity="0.75" />
         {/* blinking cursor */}
         <rect x="184" y="166" width="4" height="5" fill="#0F172A" className="dwi-cursor" />
       </g>
@@ -73,16 +73,16 @@ export default function DevWorkflowIllustration({ className }: { className?: str
         <circle cx="286" cy="56" r="3" fill="#EF4444" />
         <circle cx="296" cy="56" r="3" fill="#F59E0B" />
         <circle cx="306" cy="56" r="3" fill="#10B981" />
-        <rect x="284" y="68" width="60" height="4" rx="2" fill="#4F7FE0" opacity="0.7" />
+        <rect x="284" y="68" width="60" height="4" rx="2" fill="#3B5FE3" opacity="0.7" />
         <rect x="284" y="78" width="80" height="4" rx="2" fill="#CBD5E1" />
         <rect x="284" y="88" width="45" height="4" rx="2" fill="#CBD5E1" />
-        <rect x="284" y="98" width="65" height="4" rx="2" fill="#4F7FE0" opacity="0.5" />
+        <rect x="284" y="98" width="65" height="4" rx="2" fill="#3B5FE3" opacity="0.5" />
       </g>
 
       {/* Magnifying glass (left) */}
       <g className="dwi-float">
-        <circle cx="70" cy="150" r="26" fill="none" stroke="#4F7FE0" strokeWidth="6" opacity="0.85" />
-        <line x1="89" y1="169" x2="106" y2="186" stroke="#4F7FE0" strokeWidth="7" strokeLinecap="round" opacity="0.85" />
+        <circle cx="70" cy="150" r="26" fill="none" stroke="#3B5FE3" strokeWidth="6" opacity="0.85" />
+        <line x1="89" y1="169" x2="106" y2="186" stroke="#3B5FE3" strokeWidth="7" strokeLinecap="round" opacity="0.85" />
       </g>
 
       {/* Gear / automation icon (bottom-right) */}
@@ -90,19 +90,19 @@ export default function DevWorkflowIllustration({ className }: { className?: str
         <circle cx="330" cy="235" r="22" fill="#FFFFFF" stroke="#E2E8F0" />
         <path
           d="M330 222v-4m0 34v-4m13-13h4m-34 0h4m18.5-9.2l2.8-2.8m-25.6 25.6l2.8-2.8m0-20l-2.8-2.8m25.6 25.6l-2.8-2.8"
-          stroke="#4F7FE0"
+          stroke="#3B5FE3"
           strokeWidth="2.5"
           strokeLinecap="round"
         />
-        <circle cx="330" cy="235" r="7" fill="#4F7FE0" opacity="0.8" />
+        <circle cx="330" cy="235" r="7" fill="#3B5FE3" opacity="0.8" />
       </g>
 
       {/* Plant / growth accent */}
       <g className="dwi-float-slow" style={{ animationDelay: '1.2s' }}>
-        <path d="M95 260 Q90 235 105 220" stroke="#4F7FE0" strokeWidth="3" fill="none" opacity="0.5" strokeLinecap="round" />
-        <path d="M95 260 Q100 240 88 225" stroke="#4F7FE0" strokeWidth="3" fill="none" opacity="0.4" strokeLinecap="round" />
-        <ellipse cx="105" cy="218" rx="8" ry="12" fill="#4F7FE0" opacity="0.3" transform="rotate(-20 105 218)" />
-        <ellipse cx="88" cy="223" rx="7" ry="11" fill="#4F7FE0" opacity="0.25" transform="rotate(15 88 223)" />
+        <path d="M95 260 Q90 235 105 220" stroke="#3B5FE3" strokeWidth="3" fill="none" opacity="0.5" strokeLinecap="round" />
+        <path d="M95 260 Q100 240 88 225" stroke="#3B5FE3" strokeWidth="3" fill="none" opacity="0.4" strokeLinecap="round" />
+        <ellipse cx="105" cy="218" rx="8" ry="12" fill="#3B5FE3" opacity="0.3" transform="rotate(-20 105 218)" />
+        <ellipse cx="88" cy="223" rx="7" ry="11" fill="#3B5FE3" opacity="0.25" transform="rotate(15 88 223)" />
       </g>
 
       {/* Status pulse dot (top-left, "online") */}

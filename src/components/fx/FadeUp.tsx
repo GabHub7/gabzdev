@@ -22,6 +22,7 @@ export default function FadeUp({
   threshold = 0.15,
   as: Tag = 'div',
   className = '',
+  style = {},
 }: {
   children: ReactNode;
   delay?: number;
@@ -30,6 +31,7 @@ export default function FadeUp({
   threshold?: number;
   as?: ElementType;
   className?: string;
+  style?: React.CSSProperties;
 }) {
   const { ref, isVisible } = useScrollReveal(threshold);
 
@@ -38,6 +40,7 @@ export default function FadeUp({
       ref={ref}
       className={className}
       style={{
+        ...style,
         opacity: isVisible ? 1 : 0,
         transform: isVisible ? 'translateY(0)' : `translateY(${distance}px)`,
         transition: `opacity ${duration}ms cubic-bezier(0.16,1,0.3,1) ${delay}ms, transform ${duration}ms cubic-bezier(0.16,1,0.3,1) ${delay}ms`,

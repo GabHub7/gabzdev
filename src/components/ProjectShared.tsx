@@ -32,7 +32,7 @@ export const MAX_CATEGORIES_PER_PROJECT = 3;
  * perlu atur warna satu-satu.
  */
 const CATEGORY_PALETTE: { bg: string; text: string; border: string }[] = [
-  { bg: 'rgba(79,127,224,0.12)', text: '#1D4ED8', border: 'rgba(79,127,224,0.18)' },   // blue
+  { bg: 'rgba(59, 95, 227,0.12)', text: '#1D4ED8', border: 'rgba(59, 95, 227,0.18)' },   // blue
   { bg: 'rgba(16,185,129,0.12)', text: '#047857', border: 'rgba(16,185,129,0.18)' }, // green
   { bg: 'rgba(249,115,22,0.12)', text: '#C2410C', border: 'rgba(249,115,22,0.18)' }, // orange
   { bg: 'rgba(168,85,247,0.12)', text: '#7E22CE', border: 'rgba(168,85,247,0.18)' }, // purple
@@ -71,9 +71,9 @@ export function CategoryFilterBar({ categories, active, onChange, dark = false }
         <button key={cat} onClick={() => onChange(cat)}
           className="px-5 py-2.5 text-sm font-medium rounded-full transition-all duration-300 focus-ring"
           style={{
-            background: active === cat ? '#4F7FE0' : dark ? 'rgba(255,255,255,0.06)' : 'rgba(15,23,42,0.05)',
+            background: active === cat ? '#3B5FE3' : dark ? 'rgba(255,255,255,0.06)' : 'rgba(15,23,42,0.05)',
             color: active === cat ? '#FFFFFF' : dark ? '#CBD5E1' : '#334155',
-            border: active === cat ? '1px solid #4F7FE0' : dark ? '1px solid rgba(255,255,255,0.12)' : '1px solid rgba(15,23,42,0.1)',
+            border: active === cat ? '1px solid #3B5FE3' : dark ? '1px solid rgba(255,255,255,0.12)' : '1px solid rgba(15,23,42,0.1)',
             backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
           }}>
           <FilterLabel category={cat} />
@@ -197,7 +197,7 @@ export function ProjectModal({ project, onClose }: { project: Project; onClose: 
               <div className="flex flex-wrap gap-2">
                 {project.tags.map((tag) => (
                   <span key={tag} className="text-xs font-semibold px-3.5 py-1.5 rounded-full"
-                    style={{ background: 'rgba(79,127,224,0.1)', color: '#4F7FE0', border: '1px solid rgba(79,127,224,0.15)' }}>
+                    style={{ background: 'rgba(59, 95, 227,0.1)', color: '#3B5FE3', border: '1px solid rgba(59, 95, 227,0.15)' }}>
                     {tag}
                   </span>
                 ))}
@@ -270,16 +270,16 @@ export function ProjectCard({ project, onClick }: { project: Project; onClick: (
           </PhotoView>
           {project.isPinned && (
             <div className="absolute top-4 right-4 glass-pill px-2.5 py-1.5 flex items-center gap-1"
-              style={{ backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', background: 'rgba(79,127,224,0.85)' }}>
+              style={{ backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', background: 'rgba(59, 95, 227,0.85)' }}>
               <Pin size={11} style={{ color: '#fff' }} />
               <span className="text-[10px] font-semibold" style={{ color: '#fff' }}>{t.portfolio.pinnedLabel}</span>
             </div>
           )}
           <div className="absolute inset-0 flex items-center justify-center transition-opacity duration-300"
-            style={{ opacity: isHovered ? 1 : 0, background: 'rgba(79,127,224,0.12)', backdropFilter: 'blur(2px)' }}>
+            style={{ opacity: isHovered ? 1 : 0, background: 'rgba(59, 95, 227,0.12)', backdropFilter: 'blur(2px)' }}>
             <div className="glass-pill px-4 py-2 text-sm font-semibold flex items-center gap-2"
               style={{ backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', color: '#0F172A' }}>
-              <ExternalLink size={14} style={{ color: '#4F7FE0' }} /> {t.portfolio.viewDetail}
+              <ExternalLink size={14} style={{ color: '#3B5FE3' }} /> {t.portfolio.viewDetail}
             </div>
           </div>
         </div>
@@ -293,7 +293,7 @@ export function ProjectCard({ project, onClick }: { project: Project; onClick: (
             <div className="flex flex-wrap gap-2 mt-auto">
               {project.tags.slice(0, 3).map((tag) => (
                 <span key={tag} className="text-xs font-medium px-3 py-1 rounded-full"
-                  style={{ background: 'rgba(79,127,224,0.08)', color: '#4F7FE0' }}>{tag}</span>
+                  style={{ background: 'rgba(59, 95, 227,0.08)', color: '#3B5FE3' }}>{tag}</span>
               ))}
             </div>
           )}

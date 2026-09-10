@@ -43,11 +43,33 @@
     --page-bg: #F5F7FA;               /* light bg page utama */
     --stat-bg: #FFFFFF;
     --border-soft: #E5EAF0;
+
+    /* === Identitas baru per MASTER PROMPT (creative/editorial direction) ===
+       Dipake di Hero, loader, cursor, nav, dan section2 baru yang lagi
+       di-rebuild bertahap. Section LAMA (About/Packages/Testimonials/
+       Portfolio/Footer) masih pake --primary-blue (#3B5FE3) di atas
+       sampe kebagian giliran di-rebuild — jadi buat sementara ada 2
+       palette hidup bareng, ini SENGAJA, bukan kelupaan. */
+    --brand-blue: #2563FF;
+    --brand-blue-dark: #1237B8;
+    --brand-white: #F7F7F5;
+    --brand-black: #080808;
+    --brand-gray: #B8B8B8;
+    --font-display: 'Bebas Neue', 'Anton', sans-serif;
   }
 
   html {
     scroll-behavior: smooth;
     font-family: 'Poppins', 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Toggled by CustomCursor.tsx — sembunyiin kursor native CUMA pas
+     versi custom-nya beneran aktif (desktop, pointer:fine, no
+     reduced-motion). Nggak nyentuh Dashboard/Login sama sekali karena
+     class ini cuma ditambahin di view portfolio/projects. */
+  body.custom-cursor-active,
+  body.custom-cursor-active * {
+    cursor: none !important;
   }
 
   body {
@@ -127,7 +149,7 @@
 
   /* Primary solid button */
   .btn-primary {
-    background: linear-gradient(135deg, #4F7FE0, #2F57B8);
+    background: linear-gradient(135deg, #3B5FE3, #304DBA);
     color: white;
     border-radius: 0;
     padding: 14px 28px;
@@ -142,9 +164,9 @@
   }
 
   .btn-primary:hover {
-    background: linear-gradient(135deg, #2F57B8, #14213D);
+    background: linear-gradient(135deg, #304DBA, #14213D);
     transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 10px 28px rgba(79, 127, 224, 0.4);
+    box-shadow: 0 10px 28px rgba(59, 95, 227, 0.4);
   }
 
   .btn-primary:active {
@@ -192,7 +214,7 @@
     width: 100%;
     height: 8px;
     border-radius: 2px;
-    background: rgba(79, 127, 224, 0.14);
+    background: rgba(59, 95, 227, 0.14);
     overflow: visible;
     position: relative;
   }
@@ -201,7 +223,7 @@
   .skill-fill {
     height: 8px;
     border-radius: 2px;
-    background: linear-gradient(90deg, #7BA1EC, #4F7FE0);
+    background: linear-gradient(90deg, #7BA1EC, #3B5FE3);
     transition: width 1500ms cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
   }
@@ -453,11 +475,11 @@
     top: 0;
     left: 0;
     height: 3px;
-    background: linear-gradient(90deg, #7BA1EC, #4F7FE0);
+    background: linear-gradient(90deg, #7BA1EC, #3B5FE3);
     z-index: 9999;
     transform-origin: left;
     border-radius: 0 2px 2px 0;
-    box-shadow: 0 0 8px rgba(79, 127, 224, 0.5);
+    box-shadow: 0 0 8px rgba(59, 95, 227, 0.5);
   }
 
   /* ── Text shimmer on section headings ── */
@@ -532,7 +554,7 @@
     position: absolute;
     inset: -1px;
     border-radius: inherit;
-    background: linear-gradient(135deg, rgba(79,127,224,0), rgba(79,127,224,0.35), rgba(79,127,224,0));
+    background: linear-gradient(135deg, rgba(59,95,227,0), rgba(59,95,227,0.35), rgba(59,95,227,0));
     background-size: 300% 300%;
     opacity: 0;
     transition: opacity 0.4s ease;

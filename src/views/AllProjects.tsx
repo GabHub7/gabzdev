@@ -27,7 +27,7 @@ export default function AllProjects() {
         </button>
 
         <div className="text-center mb-10">
-          <p className="text-sm font-semibold tracking-[0.1em] mb-3" style={{ color: '#4F7FE0' }}>
+          <p className="text-sm font-semibold tracking-[0.1em] mb-3" style={{ color: '#3B5FE3' }}>
             {t.allProjects.label}
           </p>
           <h1 className="font-bold mb-4" style={{ fontSize: 'clamp(28px,3.5vw,48px)', color: '#F8FAFC', lineHeight: 1.2 }}>

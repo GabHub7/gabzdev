@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
 import { Menu, X, Globe, ArrowUpRight } from 'lucide-react';
 import { useView } from '../context/ViewContext';
 import { useTranslation } from '../lib/i18n';
@@ -15,11 +14,11 @@ function LanguageSwitcher() {
   return (
     <div
       className="inline-flex items-center gap-0.5 p-0.5 shrink-0"
-      style={{ background: 'rgba(15,23,42,0.06)', border: '1px solid rgba(15,23,42,0.08)' }}
+      style={{ background: 'rgba(15,23,42,0.06)', border: '1px solid rgba(15,23,42,0.08)', borderRadius: 10 }}
       role="group"
       aria-label="Language switcher"
     >
-      <Globe size={13} style={{ color: '#4F7FE0', marginLeft: 6 }} />
+      <Globe size={13} style={{ color: '#3B5FE3', marginLeft: 6 }} />
       {(['en', 'id'] as Lang[]).map((l) => (
         <button
           key={l}
@@ -27,8 +26,9 @@ function LanguageSwitcher() {
           onClick={() => pick(l)}
           className="text-xs font-semibold px-2.5 py-1.5 transition-all duration-200 focus-ring"
           style={{
-            background: language === l ? '#4F7FE0' : 'transparent',
+            background: language === l ? '#3B5FE3' : 'transparent',
             color: language === l ? '#FFFFFF' : '#334155',
+            borderRadius: 7,
           }}
           aria-pressed={language === l}
         >
@@ -39,7 +39,7 @@ function LanguageSwitcher() {
   );
 }
 
-export default function Header({ hideWordmark = false }: { hideWordmark?: boolean }) {
+export default function Header() {
   const { view, setView } = useView();
   const { t } = useTranslation();
   const [scrolled, setScrolled] = useState(false);
@@ -122,23 +122,13 @@ export default function Header({ hideWordmark = false }: { hideWordmark?: boolea
             style={{ cursor: 'default', background: 'none', border: 'none', padding: 0 }}
             aria-label="GabzStore home"
           >
-            {/* layoutId="brand-logo" sama dengan logo di LoadingScreen →
-                Framer Motion nge-animate posisi + ukuran logo dari tengah
-                loading ke sini (pojok kiri header) begitu intro selesai.
-                Efek "logo terbang" ke navbar. Selama intro masih tampil,
-                logo di sini disembunyikan supaya nggak ada 2 layoutId sama
-                di DOM bareng (bikin animasi kacau). */}
-            {!hideWordmark && (
-              <motion.img
-                layoutId="brand-logo"
-                src="/images/logo.png"
-                alt="GabzStore"
-                width={28}
-                height={28}
-                style={{ objectFit: 'contain' }}
-                transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
-              />
-            )}
+            <img
+              src="/images/logo.png"
+              alt="GabzDev"
+              width={28}
+              height={28}
+              style={{ objectFit: 'contain' }}
+            />
             <span
               className="brand-wordmark text-lg"
               style={{ userSelect: 'none', fontWeight: 700 }}
@@ -158,7 +148,7 @@ export default function Header({ hideWordmark = false }: { hideWordmark?: boolea
                 onClick={(e) => handleLinkClick(e, link.href)}
                 className="relative text-sm font-medium transition-colors duration-300 focus-ring"
                 style={{ color: '#334155' }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#4F7FE0')}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#3B5FE3')}
                 onMouseLeave={(e) => (e.currentTarget.style.color = '#334155')}
               >
                 {link.label}
@@ -174,7 +164,7 @@ export default function Header({ hideWordmark = false }: { hideWordmark?: boolea
                 onClick={(e) => { e.preventDefault(); scrollToAnchor('#footer'); }}
                 className="btn-bounce inline-flex items-center gap-1.5 text-sm font-semibold focus-ring"
                 style={{ background: '#3B5FE3', color: '#FFFFFF', padding: '11px 22px', borderRadius: 9999 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = '#2F57B8')}
+                onMouseEnter={(e) => (e.currentTarget.style.background = '#304DBA')}
                 onMouseLeave={(e) => (e.currentTarget.style.background = '#3B5FE3')}
               >
                 {t.nav.letsTalk} <ArrowUpRight size={14} />

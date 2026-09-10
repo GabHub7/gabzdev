@@ -34,7 +34,7 @@ function BrandLogo({ brand }: { brand: TrustedBrand }) {
       ) : (
         <span
           className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0"
-          style={{ background: 'rgba(79,127,224,0.12)', color: '#4F7FE0' }}
+          style={{ background: 'rgba(59, 95, 227,0.12)', color: '#3B5FE3' }}
         >
           {brand.name.charAt(0).toUpperCase()}
         </span>
@@ -74,7 +74,7 @@ export default function TrustedBy() {
             animate={isVisible ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="text-sm font-semibold tracking-[0.1em] mb-3"
-            style={{ color: '#4F7FE0' }}
+            style={{ color: '#3B5FE3' }}
           >
             {t.trustedBy.label}
           </motion.p>

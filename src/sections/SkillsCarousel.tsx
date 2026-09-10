@@ -1,4 +1,4 @@
-import { useScrollReveal } from '../hooks/useScrollReveal';
+import FadeUp from '../components/fx/FadeUp';
 import { useTranslation } from '../lib/i18n';
 import { useSkills } from '../lib/queries';
 import { resolveSkillLogo } from '../lib/skillLogos';
@@ -62,7 +62,6 @@ function splitIntoRows(skills: DashSkill[], count: number): DashSkill[][] {
 }
 
 export default function SkillsCarousel() {
-  const { ref, isVisible } = useScrollReveal(0.15);
   const { language } = useTranslation();
   const { skills } = useSkills('gabzdev');
 
@@ -72,18 +71,18 @@ export default function SkillsCarousel() {
 
   return (
     <section id="skills-carousel" className="relative py-16 md:py-24" style={{ background: '#FFFFFF' }}>
-      <div
-        ref={ref}
-        className={`relative z-10 max-w-[1100px] mx-auto px-6 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
-        style={{ transitionTimingFunction: 'cubic-bezier(0.16,1,0.3,1)' }}
-      >
-        <p className="skills-eyebrow">
-          {language === 'id' ? 'Dibangun Pakai Teknologi Modern' : 'Built With Modern Technology'}
-        </p>
+      <div className="relative z-10 max-w-[1100px] mx-auto px-6">
+        <FadeUp threshold={0.2}>
+          <p className="skills-eyebrow">
+            {language === 'id' ? 'Dibangun Pakai Teknologi Modern' : 'Built With Modern Technology'}
+          </p>
+        </FadeUp>
 
         <div className="skills-stage">
           {rows.map((row, i) => (
-            <MarqueeRow key={i} skills={row} reverse={i % 2 === 0} duration={30 + i * 8} />
+            <FadeUp key={i} threshold={0.2} delay={150 + i * 120} distance={16}>
+              <MarqueeRow skills={row} reverse={i % 2 === 0} duration={30 + i * 8} />
+            </FadeUp>
           ))}
         </div>
       </div>

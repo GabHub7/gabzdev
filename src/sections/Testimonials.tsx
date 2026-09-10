@@ -123,7 +123,7 @@ function TestimonialModal({ testimonial, color, onClose }: { testimonial: DashTe
         </button>
 
         <div className="p-8">
-          <Quote size={34} style={{ color: 'rgba(79,127,224,0.45)' }} className="mb-4" />
+          <Quote size={34} style={{ color: 'rgba(59, 95, 227,0.45)' }} className="mb-4" />
 
           <p className="text-base mb-7" style={{ color: '#E2E8F0', lineHeight: 1.85 }}>
             {quote}
@@ -195,7 +195,7 @@ function TestimonialCard({
           {quote}
         </p>
 
-        <span className="text-xs font-semibold" style={{ color: '#4F7FE0' }}>
+        <span className="text-xs font-semibold" style={{ color: '#3B5FE3' }}>
           {t.testimonials.readFull} →
         </span>
 

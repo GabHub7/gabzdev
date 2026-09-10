@@ -8,7 +8,7 @@ import { useRef, useState, type ReactNode, type CSSProperties } from 'react';
 export default function SpotlightCard({
   children,
   className = '',
-  spotlightColor = 'rgba(79,127,224,0.35)',
+  spotlightColor = 'rgba(59, 95, 227,0.35)',
   style,
 }: {
   children: ReactNode;

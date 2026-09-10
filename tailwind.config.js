@@ -10,6 +10,11 @@ module.exports = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        "brand-blue": "var(--brand-blue)",
+        "brand-blue-dark": "var(--brand-blue-dark)",
+        "brand-white": "var(--brand-white)",
+        "brand-black": "var(--brand-black)",
+        "brand-gray": "var(--brand-gray)",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -51,6 +56,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Poppins', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Bebas Neue', 'Anton', 'sans-serif'],
       },
       borderRadius: {
         xl: "calc(var(--radius) + 4px)",
