@@ -111,24 +111,26 @@ export default function App() {
                   {/* Fold pertama — eager, jadi LCP cepat.
                       Efek "kartu numpuk": Hero di-pin (sticky) selama extra
                       scroll-room di wrapper luar (100dvh ekstra di atas
-                      tinggi Hero sendiri), sementara SkillsCarousel (section
+                      tinggi Hero sendiri), sementara About (section
                       abisnya, z-index lebih tinggi + background solid)
                       geser naik dari bawah nutupin Hero yang lagi nge-pin.
                       Sengaja CUMA section 1->2 -- section-section lain
-                      tetap scroll normal biasa. */}
+                      tetap scroll normal biasa.
+                      Urutan: Hero -> [numpuk] -> About -> Skills -> Packages
+                      -> Portfolio -> Footer. */}
                   <div className="relative" style={{ height: 'calc(100dvh + 60vh)' }}>
                     <div className="sticky top-0" style={{ zIndex: 0 }}>
                       <Hero />
                     </div>
                   </div>
+                  <div className="relative" style={{ zIndex: 10 }}>
+                    <About />
+                  </div>
                   {/* Di bawah fold — lazy. Fallback dikasih minHeight supaya
                       layout nggak "jumping" pas chunk masuk (CLS = 0). */}
                   <Suspense fallback={<div style={{ minHeight: 200 }} />}>
-                    <div className="relative" style={{ zIndex: 10 }}>
-                      <SkillsCarousel />
-                    </div>
+                    <SkillsCarousel />
                   </Suspense>
-                  <About />
                   <Packages />
                   <Suspense fallback={<div style={{ minHeight: 400 }} />}>
                     <Portfolio />

@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { ArrowUpRight, Github, ExternalLink } from 'lucide-react';
 import { useView } from '../context/ViewContext';
 import { useTranslation } from '../lib/i18n';
+import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { useProjects, useSocial } from '../lib/queries';
 import { mapDashProjects, type Project } from '../components/ProjectShared';
 import FadeUp from '../components/fx/FadeUp';
@@ -14,11 +15,10 @@ import FadeUp from '../components/fx/FadeUp';
  * scroll ke atas kepisah lagi (karena sticky itu native browser behavior,
  * bukan animasi satu-arah).
  *
- * Beda sama versi paling awal (yang di-drop krn dikira bug): versi lama
- * cuma nge-crossfade SATU kartu doang (nggak ada kartu lain yang ikut
- * kelihatan sama sekali), makanya kesannya "cuma muncul 1". Versi ini
- * proyek SEBELUMNYA tetap nempel di belakang selama transisi — itu yang
- * bikin efek "numpuk"-nya kerasa.
+ * Tiap kartu gantian: background HITAM/PUTIH selang-seling per index, dan
+ * layout gambar-kiri/gambar-kanan juga selang-seling (index genap: gambar
+ * kiri, ganjil: gambar kanan) — biar nggak monoton satu warna & satu
+ * layout doang sepanjang stack.
  *
  * Cuma di-stack buat N proyek unggulan (biar homepage nggak jadi sepanjang
  * jumlah_proyek x 130vh kalau proyeknya puluhan) — sisanya diarahin ke
@@ -26,6 +26,7 @@ import FadeUp from '../components/fx/FadeUp';
  */
 const STACK_LIMIT = 6;
 const SLOT_VH = 130; // tinggi "jatah scroll" per kartu, dalam vh
+const STACK_BG = ['#080808', '#F7F7F5']; // selang-seling hitam / putih-gading
 
 export default function Portfolio() {
   const { setView } = useView();
@@ -41,7 +42,7 @@ export default function Portfolio() {
   const canStack = stack.length >= 2;
 
   return (
-    <section id="portfolio" className="relative" style={{ background: '#0A0F1C' }}>
+    <section id="portfolio" className="relative" style={{ background: '#080808' }}>
       <div className="pt-20 md:pt-24 pb-10 px-6 md:px-10 max-w-[1200px] mx-auto">
         <FadeUp>
           <p className="text-sm font-semibold tracking-[0.1em] uppercase mb-3" style={{ color: '#7BA1EC' }}>
@@ -59,25 +60,28 @@ export default function Portfolio() {
         </div>
       ) : canStack ? (
         <div className="relative" style={{ height: `${stack.length * SLOT_VH}vh` }}>
-          {stack.map((project, i) => (
-            <div
-              key={project.id}
-              className="sticky top-0 flex items-center overflow-hidden"
-              style={{ height: '100dvh', zIndex: i + 1, background: STACK_BG[i % STACK_BG.length] }}
-            >
-              <StackedCard project={project} index={i} total={stack.length} t={t} />
-            </div>
-          ))}
+          {stack.map((project, i) => {
+            const dark = i % 2 === 0;
+            return (
+              <div
+                key={project.id}
+                className="sticky top-0 flex items-center overflow-hidden"
+                style={{ height: '100dvh', zIndex: i + 1, background: STACK_BG[i % 2] }}
+              >
+                <StackedCard project={project} index={i} total={stack.length} t={t} dark={dark} imageLeft={dark} />
+              </div>
+            );
+          })}
         </div>
       ) : (
         // Cuma 1 proyek — nggak ada yang di-stack, tampil statis aja
         <div className="relative flex items-center" style={{ minHeight: '90dvh', background: STACK_BG[0] }}>
-          <StackedCard project={stack[0]} index={0} total={1} t={t} />
+          <StackedCard project={stack[0]} index={0} total={1} t={t} dark imageLeft />
         </div>
       )}
 
       {/* Penutup: sisanya diarahin ke grid "View All" + link GitHub */}
-      <div className="py-16 md:py-20 px-6 text-center" style={{ background: '#0A0F1C' }}>
+      <div className="py-16 md:py-20 px-6 text-center" style={{ background: '#080808' }}>
         {hasMore && (
           <button
             onClick={() => setView('projects')}
@@ -105,39 +109,63 @@ export default function Portfolio() {
   );
 }
 
-// Background gelap gantian per kartu biar transisi antar-stack kerasa beda,
-// nggak monoton satu warna doang — semuanya tetep OPAQUE (bukan
-// transparan) biar beneran nutupin kartu di belakangnya, bukan numpuk
-// transparan yang malah keliatan berantakan.
-const STACK_BG = ['#0A0F1C', '#111827', '#0F1729', '#151E32'];
-
 function StackedCard({
   project,
   index,
   total,
   t,
+  dark,
+  imageLeft,
 }: {
   project: Project;
   index: number;
   total: number;
   t: ReturnType<typeof useTranslation>['t'];
+  dark: boolean;
+  imageLeft: boolean;
 }) {
+  // Bug lama: title/description nggak auto-translate (langsung raw dari
+  // Supabase). Field lain (bio, headline, testimoni) semua udah lewat
+  // useAutoTranslate — di sini kelewatan, sekarang disamain.
+  const title = useAutoTranslate(project.title);
+  const description = useAutoTranslate(project.description);
+
+  // Warna dikondisiin berdasar background kartu (hitam/putih selang-seling)
+  const c = {
+    heading: dark ? '#FFFFFF' : '#080808',
+    body: dark ? '#94A3B8' : '#475569',
+    meta: dark ? '#64748B' : '#94A3B8',
+    imgBorder: dark ? 'rgba(255,255,255,0.12)' : 'rgba(8,8,8,0.12)',
+    pillBg: dark ? 'rgba(255,255,255,0.1)' : 'rgba(8,8,8,0.06)',
+    pillText: dark ? '#FFFFFF' : '#080808',
+    tagBorder: dark ? 'rgba(255,255,255,0.15)' : 'rgba(8,8,8,0.15)',
+    tagText: dark ? '#CBD5E1' : '#334155',
+    outlineBtnBorder: dark ? 'rgba(255,255,255,0.3)' : 'rgba(8,8,8,0.3)',
+    outlineBtnText: dark ? '#FFFFFF' : '#080808',
+    ghostBtnBorder: dark ? 'rgba(255,255,255,0.15)' : 'rgba(8,8,8,0.15)',
+    ghostBtnText: dark ? '#94A3B8' : '#475569',
+    dotInactive: dark ? 'rgba(255,255,255,0.2)' : 'rgba(8,8,8,0.15)',
+  };
+
+  const imgOrder = `order-2 ${imageLeft ? 'lg:order-1' : 'lg:order-2'}`;
+  const textOrder = `order-1 ${imageLeft ? 'lg:order-2' : 'lg:order-1'}`;
+
   return (
     <div className="max-w-[1200px] mx-auto px-6 md:px-10 w-full grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-      <FadeUp className="overflow-hidden order-2 lg:order-1" style={{ aspectRatio: '16/10', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 12 }} threshold={0.35}>
-        <img src={project.image} alt={project.title} className="w-full h-full object-cover" loading={index === 0 ? 'eager' : 'lazy'} />
+      <FadeUp className={`overflow-hidden ${imgOrder}`} style={{ aspectRatio: '16/10', border: `1px solid ${c.imgBorder}`, borderRadius: 12 }} threshold={0.35}>
+        <img src={project.image} alt={title} className="w-full h-full object-cover" loading={index === 0 ? 'eager' : 'lazy'} />
       </FadeUp>
 
-      <div className="order-1 lg:order-2">
+      <div className={textOrder}>
         <FadeUp threshold={0.35}>
-          <p className="text-sm font-mono mb-2" style={{ color: '#64748B' }}>
+          <p className="text-sm font-mono mb-2" style={{ color: c.meta }}>
             {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
           </p>
         </FadeUp>
 
         <FadeUp threshold={0.35} delay={80}>
-          <h3 className="font-bold mb-3" style={{ fontSize: 'clamp(24px,3vw,40px)', color: '#FFFFFF' }}>
-            {project.title}
+          <h3 className="font-bold mb-3" style={{ fontSize: 'clamp(24px,3vw,40px)', color: c.heading }}>
+            {title}
           </h3>
         </FadeUp>
 
@@ -145,7 +173,7 @@ function StackedCard({
           <FadeUp threshold={0.35} delay={160}>
             <div className="flex flex-wrap gap-2 mb-4">
               {project.highlights.map((h) => (
-                <span key={h} className="text-xs font-semibold px-3 py-1" style={{ background: 'rgba(255,255,255,0.1)', color: '#FFFFFF', borderRadius: 999 }}>
+                <span key={h} className="text-xs font-semibold px-3 py-1" style={{ background: c.pillBg, color: c.pillText, borderRadius: 999 }}>
                   {h}
                 </span>
               ))}
@@ -154,8 +182,8 @@ function StackedCard({
         )}
 
         <FadeUp threshold={0.35} delay={240}>
-          <p className="text-sm mb-5" style={{ color: '#94A3B8', lineHeight: 1.7 }}>
-            {project.description}
+          <p className="text-sm mb-5" style={{ color: c.body, lineHeight: 1.7 }}>
+            {description}
           </p>
         </FadeUp>
 
@@ -163,7 +191,7 @@ function StackedCard({
           <FadeUp threshold={0.35} delay={320}>
             <div className="flex flex-wrap gap-2 mb-6">
               {project.tags.map((tag) => (
-                <span key={tag} className="text-xs font-medium px-2.5 py-1" style={{ border: '1px solid rgba(255,255,255,0.15)', color: '#CBD5E1', borderRadius: 999 }}>
+                <span key={tag} className="text-xs font-medium px-2.5 py-1" style={{ border: `1px solid ${c.tagBorder}`, color: c.tagText, borderRadius: 999 }}>
                   {tag}
                 </span>
               ))}
@@ -192,7 +220,7 @@ function StackedCard({
                 rel="noopener noreferrer"
                 data-cursor
                 className="btn-bounce inline-flex items-center gap-1.5 text-sm font-semibold px-5 py-2.5 focus-ring"
-                style={{ border: '1px solid rgba(255,255,255,0.3)', color: '#FFFFFF', borderRadius: 9999 }}
+                style={{ border: `1px solid ${c.outlineBtnBorder}`, color: c.outlineBtnText, borderRadius: 9999 }}
               >
                 {t.portfolio.liveDemo} <ArrowUpRight size={14} />
               </a>
@@ -204,7 +232,7 @@ function StackedCard({
                 rel="noopener noreferrer"
                 data-cursor
                 className="btn-bounce inline-flex items-center gap-1.5 text-sm font-semibold px-5 py-2.5 focus-ring"
-                style={{ border: '1px solid rgba(255,255,255,0.15)', color: '#94A3B8', borderRadius: 9999 }}
+                style={{ border: `1px solid ${c.ghostBtnBorder}`, color: c.ghostBtnText, borderRadius: 9999 }}
               >
                 <Github size={14} /> {t.portfolio.repository}
               </a>
@@ -222,7 +250,7 @@ function StackedCard({
                   width: i === index ? 20 : 6,
                   height: 6,
                   borderRadius: 999,
-                  background: i === index ? '#3B5FE3' : 'rgba(255,255,255,0.2)',
+                  background: i === index ? '#3B5FE3' : c.dotInactive,
                   transition: 'all 0.3s ease',
                 }}
               />

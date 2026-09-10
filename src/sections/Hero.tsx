@@ -126,11 +126,11 @@ export default function Hero() {
             alt={`${profile.name}, Web & AI Engineer`}
             className="absolute pointer-events-none select-none"
             style={{
-              width: 'clamp(280px, 39vw, 520px)',
+              width: 'clamp(300px, 42vw, 560px)',
               height: 'auto',
               left: '50%',
               top: '100%',
-              transform: 'translate(-50%, -52%) scale(0.94)',
+              transform: 'translate(-50%, -45%) scale(0.94)',
               opacity: 0,
             }}
             width={435}
@@ -147,7 +147,7 @@ export default function Hero() {
             karena mepet banget ke bawah, numpuk sama tombol WA floating. */}
         <div
           ref={contentRef}
-          className="relative z-10 mt-20 md:mt-32 flex flex-col md:flex-row md:items-start md:justify-between gap-8"
+          className="relative z-10 mt-24 md:mt-40 flex flex-col md:flex-row md:items-start md:justify-between gap-8"
           style={{ opacity: 0, transform: 'translateY(14px)' }}
         >
           <div className="max-w-[440px]">

@@ -5,4 +5,4 @@
  * kalau tanggalnya beda dari yang barusan dikirim, berarti situsnya
  * BELUM di-rebuild/deploy ulang, bukan kode-nya yang nggak berubah.
  */
-export const BUILD_VERSION = '2026-09-09 06:00 UTC — stagger-scroll-reveal-all-sections';
+export const BUILD_VERSION = '2026-09-10 08:30 UTC — reorder-hero-about-skills+bigger-photo+portfolio-alternating+translate-fix';
