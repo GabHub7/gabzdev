@@ -109,20 +109,17 @@ export default function App() {
               <div className="relative z-10">
                 <main>
                   {/* Fold pertama — eager, jadi LCP cepat.
-                      Efek "kartu numpuk": Hero di-pin (sticky) selama extra
-                      scroll-room di wrapper luar (100dvh ekstra di atas
-                      tinggi Hero sendiri), sementara About (section
-                      abisnya, z-index lebih tinggi + background solid)
-                      geser naik dari bawah nutupin Hero yang lagi nge-pin.
-                      Sengaja CUMA section 1->2 -- section-section lain
-                      tetap scroll normal biasa.
+                      Efek "kartu numpuk": Hero sekarang nge-pin DIRINYA
+                      SENDIRI lewat GSAP ScrollTrigger (lihat Hero.tsx) —
+                      durasi pin-nya otomatis ngikutin tinggi Hero yang
+                      beneran, jadi nggak ada lagi wrapper manual dengan
+                      angka tebakan di sini. About (z-index lebih tinggi +
+                      background solid) geser naik nutupin Hero yang lagi
+                      nge-pin. Sengaja CUMA section 1->2 — section-section
+                      lain tetap scroll normal biasa.
                       Urutan: Hero -> [numpuk] -> About -> Skills -> Packages
                       -> Portfolio -> Footer. */}
-                  <div className="relative" style={{ height: 'calc(100dvh + 60vh)' }}>
-                    <div className="sticky top-0" style={{ zIndex: 0 }}>
-                      <Hero />
-                    </div>
-                  </div>
+                  <Hero />
                   <div className="relative" style={{ zIndex: 10 }}>
                     <About />
                   </div>

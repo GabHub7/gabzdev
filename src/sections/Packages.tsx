@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import FadeUp from '../components/fx/FadeUp';
 import { useTranslation } from '../lib/i18n';
+import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { useSocial, usePackages } from '../lib/queries';
 import { Star, Check, ArrowRight, Flame, X } from 'lucide-react';
 import SpotlightCard from '../components/fx/SpotlightCard';
@@ -20,6 +21,13 @@ const badgeColors: Record<string, { bg: string; color: string }> = {
 const TEASER_FEATURES = 4;
 
 const formatRupiah = (value: number) => `Rp ${new Intl.NumberFormat('id-ID').format(value)}`;
+
+/** Feature list disimpan sebagai array string — nggak bisa panggil hook
+ * langsung di dalam .map() loop, jadi tiap item dibungkus komponen kecil
+ * sendiri yang manggil useAutoTranslate-nya masing-masing. */
+function TranslatedFeature({ text }: { text: string }) {
+  return <>{useAutoTranslate(text)}</>;
+}
 
 type PackageItem = {
   id: string;
@@ -49,6 +57,8 @@ function PackageDetailModal({ pkg, orderLink, t, onClose }: { pkg: PackageItem; 
 
   const colors = badgeColors[pkg.badge] ?? badgeColors.Basic;
   const priceLabel = pkg.priceLabel ?? formatRupiah(pkg.price);
+  const title = useAutoTranslate(pkg.title);
+  const description = useAutoTranslate(pkg.description);
 
   return createPortal(
     <div
@@ -58,19 +68,19 @@ function PackageDetailModal({ pkg, orderLink, t, onClose }: { pkg: PackageItem; 
     >
       <div
         className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto"
-        style={{ background: '#FFFFFF', boxShadow: '0 32px 80px rgba(0,0,0,0.45)' }}
+        style={{ background: '#FFFFFF', boxShadow: '0 32px 80px rgba(0,0,0,0.45)', borderRadius: 16 }}
       >
         <button
           onClick={onClose}
           aria-label="Tutup"
           className="absolute top-4 right-4 z-10 w-9 h-9 flex items-center justify-center focus-ring"
-          style={{ background: 'rgba(15,23,42,0.06)' }}
+          style={{ background: 'rgba(15,23,42,0.06)', borderRadius: '50%' }}
         >
           <X size={18} style={{ color: '#0F172A' }} />
         </button>
 
         {pkg.image_url && (
-          <img src={pkg.image_url} alt={pkg.title} className="w-full h-40 object-cover" />
+          <img src={pkg.image_url} alt={title} className="w-full h-40 object-cover" />
         )}
 
         <div className="p-7">
@@ -84,17 +94,17 @@ function PackageDetailModal({ pkg, orderLink, t, onClose }: { pkg: PackageItem; 
             </div>
           </div>
 
-          <h3 className="text-2xl font-bold mb-2" style={{ color: '#0F172A' }}>{pkg.title}</h3>
-          <p className="text-sm mb-6" style={{ color: '#64748B', lineHeight: 1.6 }}>{pkg.description}</p>
+          <h3 className="text-2xl font-bold mb-2" style={{ color: '#0F172A' }}>{title}</h3>
+          <p className="text-sm mb-6" style={{ color: '#64748B', lineHeight: 1.6 }}>{description}</p>
 
           <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: '#94A3B8' }}>
-            Semua yang kamu dapat
+            {t.packages.allFeatures}
           </p>
           <ul className="flex flex-col gap-2.5 mb-6">
             {pkg.features.map((feat) => (
               <li key={feat} className="flex items-start gap-2.5 text-sm" style={{ color: '#334155' }}>
                 <Check size={16} style={{ color: '#3B5FE3', flexShrink: 0, marginTop: 2 }} />
-                {feat}
+                <TranslatedFeature text={feat} />
               </li>
             ))}
           </ul>
@@ -126,6 +136,8 @@ function PackageCard({ pkg, orderLink, t, onViewDetail }: { pkg: PackageItem; or
   const hasImage = Boolean(pkg.image_url && pkg.image_url.trim());
   const teaser = pkg.features.slice(0, TEASER_FEATURES);
   const remaining = pkg.features.length - TEASER_FEATURES;
+  const title = useAutoTranslate(pkg.title);
+  const description = useAutoTranslate(pkg.description);
 
   return (
     <SpotlightCard
@@ -135,19 +147,20 @@ function PackageCard({ pkg, orderLink, t, onViewDetail }: { pkg: PackageItem; or
         background: '#FFFFFF',
         boxShadow: pkg.is_popular ? '0 16px 40px rgba(59, 95, 227,0.18)' : 'none',
         border: pkg.is_popular ? '2px solid #3B5FE3' : '1px solid #0F172A',
+        borderRadius: 16,
       }}
     >
       {pkg.is_popular && (
         <div
           className="absolute top-0 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold z-10"
-          style={{ background: '#3B5FE3', color: '#FFFFFF' }}
+          style={{ background: '#3B5FE3', color: '#FFFFFF', borderRadius: '0 0 10px 10px' }}
         >
           <Flame size={13} /> {t.packages.popular}
         </div>
       )}
 
       {hasImage && (
-        <img src={pkg.image_url!} alt={pkg.title} className="w-full h-32 object-cover" loading="lazy" />
+        <img src={pkg.image_url!} alt={title} className="w-full h-32 object-cover" loading="lazy" />
       )}
 
       <div className={`p-7 flex flex-col flex-1 ${pkg.is_popular ? 'pt-9' : ''}`}>
@@ -161,14 +174,14 @@ function PackageCard({ pkg, orderLink, t, onViewDetail }: { pkg: PackageItem; or
           </div>
         </div>
 
-        <h3 className="text-xl font-bold mb-2" style={{ color: '#0F172A' }}>{pkg.title}</h3>
-        <p className="text-sm mb-5" style={{ color: '#64748B', lineHeight: 1.6 }}>{pkg.description}</p>
+        <h3 className="text-xl font-bold mb-2" style={{ color: '#0F172A' }}>{title}</h3>
+        <p className="text-sm mb-5" style={{ color: '#64748B', lineHeight: 1.6 }}>{description}</p>
 
         <ul className="flex flex-col gap-2.5 mb-2">
           {teaser.map((feat) => (
             <li key={feat} className="flex items-start gap-2.5 text-sm" style={{ color: '#334155' }}>
               <Check size={16} style={{ color: '#3B5FE3', flexShrink: 0, marginTop: 2 }} />
-              {feat}
+              <TranslatedFeature text={feat} />
             </li>
           ))}
         </ul>

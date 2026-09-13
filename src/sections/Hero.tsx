@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useView } from '../context/ViewContext';
 import { useTranslation } from '../lib/i18n';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
@@ -14,15 +15,18 @@ import { AvailabilityBadge } from '../components/AvailabilityBadge';
  * Hero — wordmark besar dua-nada "GABZ" (outline) + "DEV" (solid biru)
  * sebagai focal point utama, foto nempel di tengah nutupin sebagian teks.
  *
- * v3 (rombak per MASTER PROMPT poin 7 — "cinematic entrance"): entrance
- * animation-nya diganti dari fade CSS biasa ke timeline GSAP dengan
- * clip-path reveal buat wordmark (kesan "tirai kebuka ke atas") + stagger
- * buat elemen lain, ngikutin timing yang disaranin di prompt (~150ms
- * antar-tahap). Layout/posisi/ukuran (wordmark, foto, spacing) TETAP
- * dipertahanin persis kayak hasil tuning berkali-kali sebelumnya — yang
- * berubah cuma CARA elemen-elemennya muncul pertama kali.
- * Otomatis dilewatin (langsung state akhir, nggak ada animasi) kalau
- * user set prefers-reduced-motion.
+ * v4 (fix bug numpuk): sebelumnya efek "Hero diem pas section abisnya
+ * numpuk" dibikin manual pake CSS position:sticky + wrapper App.tsx yang
+ * tingginya di-hardcode (100dvh + 60vh). Begitu foto/wordmark Hero
+ * dibesarin beberapa kali di revisi2 sebelumnya, tinggi Hero yang
+ * SEBENERNYA jadi lebih dari asumsi itu, bikin sticky-nya nggak sempet
+ * "nge-pin" sama sekali (langsung lepas begitu discroll dikit).
+ * Sekarang dibikin ulang PERSIS kayak flaid.my.id (dicek dari source code
+ * aslinya): pake GSAP ScrollTrigger.create({ pin:true, pinSpacing:false,
+ * start:'top top', end:'bottom top' }) LANGSUNG di section Hero-nya
+ * sendiri — durasi pin-nya otomatis ngikutin TINGGI HERO YANG BENERAN,
+ * jadi nggak akan pernah salah hitung lagi walau kontennya berubah-ubah
+ * ukuran ke depannya. Wrapper manual di App.tsx udah dihapus.
  */
 
 export default function Hero() {
@@ -49,6 +53,8 @@ export default function Hero() {
       return;
     }
 
+    gsap.registerPlugin(ScrollTrigger);
+
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
       tl.set(wordmarkRef.current, { yPercent: 100 })
@@ -57,6 +63,17 @@ export default function Hero() {
         .to(wordmarkRef.current, { yPercent: 0, duration: 0.9 }, 0.15)
         .to(photoRef.current, { opacity: 1, scale: 1, duration: 0.7 }, 0.45)
         .to(contentRef.current, { opacity: 1, y: 0, duration: 0.6 }, 0.65);
+
+      // Efek "numpuk" section 1->2: pin Hero persis setinggi dirinya
+      // sendiri (bukan angka tebakan), section abisnya otomatis geser
+      // naik nutupin begitu pin-nya lepas.
+      ScrollTrigger.create({
+        trigger: rootRef.current,
+        start: 'top top',
+        end: 'bottom top',
+        pin: true,
+        pinSpacing: false,
+      });
     }, rootRef);
 
     return () => ctx.revert();
@@ -124,15 +141,8 @@ export default function Hero() {
             ref={photoRef}
             src="/images/hero-photo-v4.webp"
             alt={`${profile.name}, Web & AI Engineer`}
-            className="absolute pointer-events-none select-none"
-            style={{
-              width: 'clamp(300px, 42vw, 560px)',
-              height: 'auto',
-              left: '50%',
-              top: '100%',
-              transform: 'translate(-50%, -45%) scale(0.94)',
-              opacity: 0,
-            }}
+            className="hero-photo absolute pointer-events-none select-none"
+            style={{ opacity: 0 }}
             width={435}
             height={276}
             fetchPriority="high"

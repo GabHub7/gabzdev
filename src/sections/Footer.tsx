@@ -5,6 +5,7 @@ import { useScrollReveal } from '../hooks/useScrollReveal';
 import FadeUp from '../components/fx/FadeUp';
 import { useView } from '../context/ViewContext';
 import { useTranslation } from '../lib/i18n';
+import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { useSocial, useSocialIcons, useProfile, useTestimonials } from '../lib/queries';
 import { SocialGlyph } from '../lib/socialIcon';
 import { BUILD_VERSION } from '../lib/buildInfo';
@@ -108,6 +109,10 @@ function AnimatedTitle({ text }: { text: string }) {
  * Fungsi rahasia dari Footer lama TETAP dipertahankan: klik nama di bottom
  * bar 3x cepat = buka login admin diam-diam.
  */
+function TranslatedQuote({ text }: { text: string }) {
+  return <>{useAutoTranslate(text)}</>;
+}
+
 export default function Footer() {
   const { ref, isVisible } = useScrollReveal(0.1);
   const { setView } = useView();
@@ -208,7 +213,7 @@ export default function Footer() {
                     rel="noopener noreferrer"
                     data-cursor
                     className="btn-bounce flex flex-col items-center justify-center gap-2 w-24 h-24 focus-ring"
-                    style={{ border: '1px solid #0F172A' }}
+                    style={{ border: '1px solid #0F172A', borderRadius: 12 }}
                     aria-label="WhatsApp"
                   >
                     <MessageCircle size={22} style={{ color: '#0F172A' }} />
@@ -223,7 +228,7 @@ export default function Footer() {
                     rel="noopener noreferrer"
                     data-cursor
                     className="btn-bounce flex flex-col items-center justify-center gap-2 w-24 h-24 focus-ring"
-                    style={{ border: '1px solid #0F172A' }}
+                    style={{ border: '1px solid #0F172A', borderRadius: 12 }}
                     aria-label={s.label}
                   >
                     <SocialGlyph label={s.label} iconUrl={s.icon_url} size={22} color="#0F172A" />
@@ -287,7 +292,7 @@ export default function Footer() {
                             <Star key={si} size={11} fill={si < item.rating ? '#3B5FE3' : 'none'} style={{ color: '#3B5FE3' }} />
                           ))}
                         </div>
-                        <p className="text-xs line-clamp-2" style={{ color: '#64748B' }}>"{item.quote}"</p>
+                        <p className="text-xs line-clamp-2" style={{ color: '#64748B' }}>"<TranslatedQuote text={item.quote} />"</p>
                       </div>
                     </div>
                   ))}
@@ -318,7 +323,7 @@ export default function Footer() {
             <button
               onClick={scrollToTop}
               className="w-9 h-9 flex items-center justify-center transition-all duration-300 hover:scale-110 focus-ring"
-              style={{ border: '1px solid #0F172A' }}
+              style={{ border: '1px solid #0F172A', borderRadius: 12 }}
               aria-label="Scroll to top"
             >
               <ArrowUp size={15} style={{ color: '#0F172A' }} />

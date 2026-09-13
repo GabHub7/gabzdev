@@ -151,7 +151,7 @@
   .btn-primary {
     background: linear-gradient(135deg, #3B5FE3, #304DBA);
     color: white;
-    border-radius: 0;
+    border-radius: 12px;
     padding: 14px 28px;
     font-weight: 600;
     font-size: 15px;
@@ -480,6 +480,30 @@
     transform-origin: left;
     border-radius: 0 2px 2px 0;
     box-shadow: 0 0 8px rgba(59, 95, 227, 0.5);
+  }
+
+  .hero-photo {
+    /* Mobile: foto jauh lebih kecil relatif ke wordmark, biar nggak
+       nutupin sebagian besar teksnya kayak yang kejadian di HP kemarin
+       (clamp() lama minimum-nya 300px, kegedean banget buat layar 375-
+       430px yang wordmark-nya sendiri lagi di ukuran minimum ~64px). */
+    width: 190px;
+    height: auto;
+    left: 50%;
+    top: 100%;
+    transform: translate(-50%, -38%) scale(0.94);
+  }
+
+  @media (min-width: 480px) {
+    .hero-photo { width: 230px; transform: translate(-50%, -40%) scale(0.94); }
+  }
+
+  @media (min-width: 768px) {
+    .hero-photo { width: clamp(300px, 30vw, 400px); transform: translate(-50%, -42%) scale(0.94); }
+  }
+
+  @media (min-width: 1024px) {
+    .hero-photo { width: clamp(360px, 34vw, 560px); transform: translate(-50%, -45%) scale(0.94); }
   }
 
   /* ── Text shimmer on section headings ── */

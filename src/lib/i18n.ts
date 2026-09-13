@@ -52,6 +52,7 @@ const en = {
     ctaDetail: 'Order This Package',
     perPackage: '/package',
     popular: 'Most Popular',
+    allFeatures: 'Everything you get',
     items: [
       {
         badge: 'Basic',
@@ -282,6 +283,7 @@ const id: Dict = {
     ctaDetail: 'Pesan Paket Ini',
     perPackage: '/paket',
     popular: 'Terpopuler',
+    allFeatures: 'Semua yang kamu dapat',
     items: [
       {
         badge: 'Basic',

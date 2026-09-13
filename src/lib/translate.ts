@@ -56,7 +56,10 @@ export async function translateText(
     if (!res.ok) return text;
     const data = await res.json();
     const translated: string | undefined = data?.responseData?.translatedText;
-    if (translated && typeof translated === 'string' && !translated.startsWith('QUERY LENGTH')) {
+    const looksLikeApiWarning =
+      typeof translated === 'string' &&
+      /^(QUERY LENGTH|MYMEMORY WARNING|IS AN INVALID)/i.test(translated.trim());
+    if (translated && typeof translated === 'string' && !looksLikeApiWarning) {
       cache[cacheKey] = translated;
       saveCache(cache);
       return translated;
