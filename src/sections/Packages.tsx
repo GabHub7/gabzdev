@@ -85,7 +85,7 @@ function PackageDetailModal({ pkg, orderLink, t, onClose }: { pkg: PackageItem; 
 
         <div className="p-7">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold px-3 py-1" style={{ background: colors.bg, color: colors.color }}>
+            <span className="text-xs font-bold px-3 py-1 rounded-full" style={{ background: colors.bg, color: colors.color }}>
               {pkg.badge}
             </span>
             <div className="flex items-center gap-1 text-sm font-semibold" style={{ color: '#0F172A' }}>
@@ -152,35 +152,35 @@ function PackageCard({ pkg, orderLink, t, onViewDetail }: { pkg: PackageItem; or
     >
       {pkg.is_popular && (
         <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold z-10"
-          style={{ background: '#3B5FE3', color: '#FFFFFF', borderRadius: '0 0 10px 10px' }}
+          className="absolute top-0 left-1/2 -translate-x-1/2 flex items-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-1 sm:py-1.5 font-bold z-10 whitespace-nowrap"
+          style={{ background: '#3B5FE3', color: '#FFFFFF', borderRadius: '0 0 10px 10px', fontSize: 'clamp(8px,2.2vw,12px)' }}
         >
-          <Flame size={13} /> {t.packages.popular}
+          <Flame size={11} className="shrink-0" /> {t.packages.popular}
         </div>
       )}
 
       {hasImage && (
-        <img src={pkg.image_url!} alt={title} className="w-full h-32 object-cover" loading="lazy" />
+        <img src={pkg.image_url!} alt={title} className="w-full object-cover" style={{ height: 'clamp(60px, 14vw, 128px)' }} loading="lazy" />
       )}
 
-      <div className={`p-7 flex flex-col flex-1 ${pkg.is_popular ? 'pt-9' : ''}`}>
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-xs font-bold px-3 py-1" style={{ background: colors.bg, color: colors.color }}>
+      <div className={`p-2.5 sm:p-5 md:p-7 flex flex-col flex-1 ${pkg.is_popular ? 'pt-5 sm:pt-8 md:pt-9' : ''}`}>
+        <div className="flex items-center justify-between gap-1 mb-2 sm:mb-4">
+          <span className="font-bold px-1.5 sm:px-3 py-0.5 sm:py-1 whitespace-nowrap rounded-full" style={{ background: colors.bg, color: colors.color, fontSize: 'clamp(8px,2vw,12px)' }}>
             {pkg.badge}
           </span>
-          <div className="flex items-center gap-1 text-sm font-semibold" style={{ color: '#0F172A' }}>
-            <Star size={14} fill="#FBBF24" color="#FBBF24" />
+          <div className="flex items-center gap-1 font-semibold shrink-0" style={{ color: '#0F172A', fontSize: 'clamp(9px,2.2vw,14px)' }}>
+            <Star size={12} fill="#FBBF24" color="#FBBF24" className="shrink-0" />
             {pkg.rating}
           </div>
         </div>
 
-        <h3 className="text-xl font-bold mb-2" style={{ color: '#0F172A' }}>{title}</h3>
-        <p className="text-sm mb-5" style={{ color: '#64748B', lineHeight: 1.6 }}>{description}</p>
+        <h3 className="font-bold mb-1 sm:mb-2" style={{ color: '#0F172A', fontSize: 'clamp(12px,3vw,20px)' }}>{title}</h3>
+        <p className="mb-2 sm:mb-5 line-clamp-3 sm:line-clamp-none" style={{ color: '#64748B', lineHeight: 1.5, fontSize: 'clamp(9px,2.2vw,14px)' }}>{description}</p>
 
-        <ul className="flex flex-col gap-2.5 mb-2">
+        <ul className="flex flex-col gap-1 sm:gap-2.5 mb-1 sm:mb-2">
           {teaser.map((feat) => (
-            <li key={feat} className="flex items-start gap-2.5 text-sm" style={{ color: '#334155' }}>
-              <Check size={16} style={{ color: '#3B5FE3', flexShrink: 0, marginTop: 2 }} />
+            <li key={feat} className="flex items-start gap-1 sm:gap-2.5" style={{ color: '#334155', fontSize: 'clamp(9px,2.1vw,14px)' }}>
+              <Check size={13} style={{ color: '#3B5FE3', flexShrink: 0, marginTop: 2 }} />
               <TranslatedFeature text={feat} />
             </li>
           ))}
@@ -190,26 +190,27 @@ function PackageCard({ pkg, orderLink, t, onViewDetail }: { pkg: PackageItem; or
           <button
             type="button"
             onClick={onViewDetail}
-            className="text-left text-sm font-semibold mb-4 focus-ring"
-            style={{ color: '#3B5FE3' }}
+            className="text-left font-semibold mb-2 sm:mb-4 focus-ring"
+            style={{ color: '#3B5FE3', fontSize: 'clamp(9px,2.1vw,14px)' }}
           >
-            +{remaining} fitur lainnya — Lihat Detail
+            +{remaining} {t.packages.moreFeatures}
           </button>
         )}
 
-        <div className="mt-auto pt-5" style={{ borderTop: '1px solid #E2E8F0' }}>
-          <div className="flex items-baseline gap-1.5 mb-4">
-            <strong className="text-2xl font-extrabold" style={{ color: '#0F172A' }}>{priceLabel}</strong>
-            <span className="text-sm" style={{ color: '#94A3B8' }}>{t.packages.perPackage}</span>
+        <div className="mt-auto pt-2.5 sm:pt-5" style={{ borderTop: '1px solid #E2E8F0' }}>
+          <div className="flex items-baseline gap-1 sm:gap-1.5 mb-2 sm:mb-4">
+            <strong className="font-extrabold" style={{ color: '#0F172A', fontSize: 'clamp(13px,3.4vw,24px)' }}>{priceLabel}</strong>
+            <span style={{ color: '#94A3B8', fontSize: 'clamp(8px,1.8vw,14px)' }}>{t.packages.perPackage}</span>
           </div>
           <Magnetic className="w-full">
             <a
               href={orderLink(pkg.title)}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-primary w-full flex items-center justify-center gap-2 text-sm"
+              className="btn-primary w-full flex items-center justify-center gap-1 sm:gap-2"
+              style={{ fontSize: 'clamp(9px,2.2vw,14px)', padding: 'clamp(6px,1.8vw,12px) clamp(8px,2vw,16px)' }}
             >
-              {t.packages.ctaDetail} <ArrowRight size={15} />
+              {t.packages.ctaDetail} <ArrowRight size={14} className="shrink-0" />
             </a>
           </Magnetic>
         </div>
@@ -281,7 +282,7 @@ export default function Packages() {
           </FadeUp>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+        <div className="grid grid-cols-3 gap-1.5 sm:gap-4 md:gap-6 items-stretch">
           {items.map((pkg, i) => (
             <FadeUp key={pkg.id} threshold={0.15} delay={i * 120} className="h-full">
               <PackageCard pkg={pkg} orderLink={orderLink} t={t} onViewDetail={() => setDetailPkg(pkg)} />

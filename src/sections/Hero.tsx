@@ -157,30 +157,30 @@ export default function Hero() {
             karena mepet banget ke bawah, numpuk sama tombol WA floating. */}
         <div
           ref={contentRef}
-          className="relative z-10 mt-24 md:mt-40 flex flex-col md:flex-row md:items-start md:justify-between gap-8"
+          className="relative z-10 mt-16 sm:mt-24 md:mt-40 flex flex-row items-start justify-between gap-3 sm:gap-6 md:gap-8"
           style={{ opacity: 0, transform: 'translateY(14px)' }}
         >
-          <div className="max-w-[440px]">
-            <p className="text-lg md:text-xl font-bold mb-2" style={{ color: '#3B5FE3' }}>
+          <div className="min-w-0 flex-1 max-w-[440px]">
+            <p className="font-bold mb-1.5 sm:mb-2" style={{ color: '#3B5FE3', fontSize: 'clamp(13px, 3.6vw, 20px)' }}>
               {headline || t.hero.headline}
             </p>
-            <p className="text-sm mb-5 line-clamp-3" style={{ color: '#64748B', lineHeight: 1.7 }}>
+            <p className="mb-3 sm:mb-5 line-clamp-3" style={{ color: '#64748B', lineHeight: 1.6, fontSize: 'clamp(10px, 2.6vw, 14px)' }}>
               {bio || t.hero.description1}
             </p>
 
             <Magnetic>
               <button
                 onClick={() => setView('projects')}
-                className="btn-bounce inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white focus-ring"
-                style={{ background: '#3B5FE3', borderRadius: 9999, boxShadow: '0 6px 20px rgba(59, 95, 227,0.35)' }}
+                className="btn-bounce inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-6 py-2 sm:py-3 font-semibold text-white focus-ring"
+                style={{ background: '#3B5FE3', borderRadius: 9999, boxShadow: '0 6px 20px rgba(59, 95, 227,0.35)', fontSize: 'clamp(11px, 2.8vw, 14px)' }}
               >
-                {t.hero.ctaOrder} <ArrowUpRight size={15} />
+                {t.hero.ctaOrder} <ArrowUpRight size={14} className="shrink-0" />
               </button>
             </Magnetic>
           </div>
 
           {socialIcons.length > 0 && (
-            <ul className="flex md:flex-col gap-4 md:gap-3 shrink-0">
+            <ul className="flex flex-col gap-1.5 sm:gap-3 shrink-0">
               {socialIcons.map((s) => (
                 <li key={s.id}>
                   <a
@@ -188,10 +188,10 @@ export default function Hero() {
                     target="_blank"
                     rel="noopener noreferrer"
                     data-cursor
-                    className="flex items-center gap-2 text-sm font-medium focus-ring"
-                    style={{ color: '#334155' }}
+                    className="flex items-center gap-1.5 sm:gap-2 font-medium focus-ring whitespace-nowrap"
+                    style={{ color: '#334155', fontSize: 'clamp(9px, 2.4vw, 14px)' }}
                   >
-                    <SocialGlyph label={s.label} iconUrl={s.icon_url} size={16} />
+                    <SocialGlyph label={s.label} iconUrl={s.icon_url} size={14} />
                     {s.label}
                   </a>
                 </li>

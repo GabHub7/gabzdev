@@ -53,6 +53,7 @@ const en = {
     perPackage: '/package',
     popular: 'Most Popular',
     allFeatures: 'Everything you get',
+    moreFeatures: 'more features — View Details',
     items: [
       {
         badge: 'Basic',
@@ -284,6 +285,7 @@ const id: Dict = {
     perPackage: '/paket',
     popular: 'Terpopuler',
     allFeatures: 'Semua yang kamu dapat',
+    moreFeatures: 'fitur lainnya — Lihat Detail',
     items: [
       {
         badge: 'Basic',

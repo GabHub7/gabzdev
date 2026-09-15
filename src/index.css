@@ -151,7 +151,8 @@
   .btn-primary {
     background: linear-gradient(135deg, #3B5FE3, #304DBA);
     color: white;
-    border-radius: 12px;
+    /* Disamain persis sama GabzStore biar dua situs ini konsisten. */
+    border-radius: 9999px;
     padding: 14px 28px;
     font-weight: 600;
     font-size: 15px;

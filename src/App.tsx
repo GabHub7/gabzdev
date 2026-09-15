@@ -87,6 +87,35 @@ export default function App() {
     return () => sub.subscription.unsubscribe();
   }, []);
 
+  /**
+   * KUNCI LAYOUT KE SUSUNAN DESKTOP.
+   *
+   * Masalah sebelumnya: tiap kali dibuka di HP, layout-nya "reflow" —
+   * elemen yang di desktop sejajar jadi numpuk ke bawah, proporsi
+   * berantakan, dan tiap section harus di-tambal satu-satu pakai
+   * breakpoint. Nggak akan pernah kelar karena jumlah lebar layar HP itu
+   * tak terhingga.
+   *
+   * Solusinya: viewport-nya dikunci ke lebar desktop tetap (1280px).
+   * Browser HP otomatis nge-zoom-out seluruh halaman biar muat — jadi
+   * yang tampil di HP itu KOMPOSISI DESKTOP PERSIS, cuma diperkecil.
+   * Nggak ada lagi elemen yang pindah posisi/kabur, layer boleh numpuk
+   * tapi susunannya tetap sama di semua device.
+   *
+   * Dikecualikan buat Dashboard & Login: itu area kerja admin yang
+   * sering dibuka dari HP, kalau ikut dikunci 1280 tulisannya bakal
+   * kekecilan buat ngetik. Jadi dua view itu tetap width=device-width.
+   */
+  useEffect(() => {
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="viewport"]');
+    if (!meta) return;
+    const isPublicSite = view === 'portfolio' || view === 'projects';
+    meta.setAttribute(
+      'content',
+      isPublicSite ? 'width=1280, initial-scale=0' : 'width=device-width, initial-scale=1.0'
+    );
+  }, [view]);
+
   if (booting) return null;
 
   // Intro sengaja dilewati kalau langsung masuk ke area admin.

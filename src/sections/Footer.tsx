@@ -154,6 +154,64 @@ export default function Footer() {
     };
   }, [emblaApi, startAutoplay, stopAutoplay]);
 
+  /**
+   * Efek "air terjun": tiap slide dikasih skala + opacity + geser-Z
+   * berdasar SEBERAPA JAUH dia dari tengah viewport carousel. Slide yang
+   * pas di tengah tampil penuh (scale 1), makin ke atas/bawah makin
+   * mengecil & memudar — jadi kesannya kartu-kartunya ngalir jatuh
+   * bertingkat kayak air terjun, bukan cuma geser datar.
+   *
+   * Digerakin dari event `scroll` embla (BUKAN CSS transition), jadi
+   * posisinya nempel real-time ke jari pas di-swipe manual — termasuk
+   * pas loop balik dari slide terakhir ke pertama (embla ngasih progress
+   * yang udah di-wrap, makanya loop-nya tetep mulus tanpa "lompat").
+   */
+  useEffect(() => {
+    if (!emblaApi) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const applyWaterfall = () => {
+      const engine = emblaApi.internalEngine();
+      const scrollProgress = emblaApi.scrollProgress();
+      const slides = emblaApi.slideNodes();
+
+      emblaApi.scrollSnapList().forEach((snap, index) => {
+        let diff = snap - scrollProgress;
+
+        // Kompensasi buat mode loop: embla mindahin slide secara virtual
+        // ke sisi seberang, jadi jaraknya harus dihitung ulang biar
+        // efeknya nggak "kedip" pas titik sambungan loop.
+        engine.slideLooper.loopPoints.forEach((loopPoint) => {
+          const { index: loopIndex, target } = loopPoint as unknown as {
+            index: number;
+            target: () => number;
+          };
+          if (index !== loopIndex) return;
+          const t = target();
+          if (t !== 0) diff = snap - scrollProgress - Math.sign(t);
+        });
+
+        const distance = Math.min(Math.abs(diff) * 2.2, 1);
+        const scale = 1 - distance * 0.22;
+        const opacity = 1 - distance * 0.75;
+        const shift = diff * -18; // dorong dikit searah aliran
+
+        const node = slides[index] as HTMLElement | undefined;
+        if (!node) return;
+        node.style.transform = `translate3d(0, ${shift}px, 0) scale(${scale})`;
+        node.style.opacity = String(Math.max(opacity, 0));
+      });
+    };
+
+    applyWaterfall();
+    emblaApi.on('scroll', applyWaterfall);
+    emblaApi.on('reInit', applyWaterfall);
+    return () => {
+      emblaApi.off('scroll', applyWaterfall);
+      emblaApi.off('reInit', applyWaterfall);
+    };
+  }, [emblaApi]);
+
   const handleNameSecret = () => {
     clickCountRef.current += 1;
     if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
@@ -273,7 +331,13 @@ export default function Footer() {
                     <div
                       key={`${item.id}-${i}`}
                       className="flex items-start gap-3 p-4 shrink-0"
-                      style={{ border: '1px solid #E2E8F0' }}
+                      style={{
+                        border: '1px solid #E2E8F0',
+                        borderRadius: 14,
+                        background: '#FFFFFF',
+                        transformOrigin: 'center center',
+                        willChange: 'transform, opacity',
+                      }}
                     >
                       <div
                         className="w-9 h-9 rounded-full shrink-0 flex items-center justify-center text-xs font-bold overflow-hidden"
