@@ -83,14 +83,14 @@ export default function Hero() {
     <section
       ref={rootRef}
       id="hero"
-      className="relative min-h-dvh flex flex-col justify-center pt-24 md:pt-28 pb-12 px-6 md:px-10 overflow-hidden"
+      className="relative min-h-dvh flex flex-col justify-center pt-20 sm:pt-24 md:pt-28 pb-10 sm:pb-12 px-6 md:px-10 overflow-hidden"
       style={{ background: '#FFFFFF' }}
     >
       <div className="max-w-[1200px] mx-auto w-full">
         {/* Badge — cuma di bawah lg, versi lg-ke-atas nongol di Header
             (breakpoint HARUS sama kayak di Header biar nggak ada rentang
             lebar layar yang badge-nya nggak muncul di dua-duanya). */}
-        <div ref={badgeRef} className="lg:hidden flex justify-center mb-6" style={{ opacity: 0, transform: 'translateY(10px)' }}>
+        <div ref={badgeRef} className="lg:hidden flex justify-center mb-4 sm:mb-6" style={{ opacity: 0, transform: 'translateY(10px)' }}>
           <AvailabilityBadge />
         </div>
 
@@ -104,7 +104,7 @@ export default function Hero() {
               ref={wordmarkRef}
               className="hero-headline relative flex flex-wrap justify-center items-baseline select-none"
               style={{
-                fontSize: 'clamp(64px, 15vw, 196px)',
+                fontSize: 'clamp(76px, 17vw, 196px)',
                 lineHeight: 0.95,
                 letterSpacing: '-0.02em',
                 fontWeight: 700,
@@ -157,7 +157,7 @@ export default function Hero() {
             karena mepet banget ke bawah, numpuk sama tombol WA floating. */}
         <div
           ref={contentRef}
-          className="relative z-10 mt-16 sm:mt-24 md:mt-56 flex flex-row items-start justify-between gap-3 sm:gap-6 md:gap-8"
+          className="relative z-10 mt-28 sm:mt-32 md:mt-56 flex flex-row items-start justify-between gap-3 sm:gap-6 md:gap-8"
           style={{ opacity: 0, transform: 'translateY(14px)' }}
         >
           <div className="min-w-0 flex-1 max-w-[440px]">

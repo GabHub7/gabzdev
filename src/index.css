@@ -487,19 +487,21 @@
   }
 
   .hero-photo {
-    /* Mobile: foto jauh lebih kecil relatif ke wordmark, biar nggak
-       nutupin sebagian besar teksnya kayak yang kejadian di HP kemarin
-       (clamp() lama minimum-nya 300px, kegedean banget buat layar 375-
-       430px yang wordmark-nya sendiri lagi di ukuran minimum ~64px). */
-    width: 190px;
+    /* Mobile: dibesarin lagi — sebelumnya sengaja dikecilin (190px) biar
+       nggak nutupin wordmark yang waktu itu masih kecil, tapi itu bikin
+       foto keliatan kayak thumbnail, kalah jauh sama kesan "prominent"
+       di desktop. Sekarang wordmark-nya JUGA dibesarin (lihat
+       .hero-headline di bawah), jadi dua-duanya naik bareng, tetep
+       proporsional satu sama lain. */
+    width: 260px;
     height: auto;
     left: 50%;
     top: 100%;
-    transform: translate(-50%, -38%) scale(0.94);
+    transform: translate(-50%, -36%) scale(0.94);
   }
 
   @media (min-width: 480px) {
-    .hero-photo { width: 230px; transform: translate(-50%, -40%) scale(0.94); }
+    .hero-photo { width: 310px; transform: translate(-50%, -38%) scale(0.94); }
   }
 
   @media (min-width: 768px) {
