@@ -30,7 +30,7 @@ const en = {
       support: '24/7 support on WhatsApp',
       transparent: 'Transparent, no hidden fees',
     },
-    ctaOrder: 'Order Now',
+    ctaOrder: 'Start a Project',
     ctaPortfolio: 'See Portfolio',
   },
   stats: {
@@ -321,7 +321,7 @@ const id: Dict = {
       support: 'Dukungan 24/7 lewat WhatsApp',
       transparent: 'Transparan, tanpa biaya tersembunyi',
     },
-    ctaOrder: 'Pesan Sekarang',
+    ctaOrder: 'Mulai Proyek',
     ctaPortfolio: 'Lihat Portofolio',
   },
   stats: {

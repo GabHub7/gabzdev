@@ -44,10 +44,20 @@ export default function Hero() {
   const wordmarkRef = useRef<HTMLHeadingElement>(null);
   const photoRef = useRef<HTMLImageElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const mobilePhotoRef = useRef<HTMLImageElement>(null);
+  const mobileContentRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const els = [badgeRef.current, maskRef.current, wordmarkRef.current, photoRef.current, contentRef.current];
+    const els = [
+      badgeRef.current,
+      maskRef.current,
+      wordmarkRef.current,
+      photoRef.current,
+      contentRef.current,
+      mobilePhotoRef.current,
+      mobileContentRef.current,
+    ];
     if (reduce || els.some((el) => !el)) {
       gsap.set(els, { clearProps: 'all' });
       return;
@@ -61,8 +71,8 @@ export default function Hero() {
         .set(maskRef.current, { clipPath: 'inset(0 0 0 0)' })
         .to(badgeRef.current, { opacity: 1, y: 0, duration: 0.5 }, 0)
         .to(wordmarkRef.current, { yPercent: 0, duration: 0.9 }, 0.15)
-        .to(photoRef.current, { opacity: 1, scale: 1, duration: 0.7 }, 0.45)
-        .to(contentRef.current, { opacity: 1, y: 0, duration: 0.6 }, 0.65);
+        .to([photoRef.current, mobilePhotoRef.current], { opacity: 1, scale: 1, duration: 0.7 }, 0.45)
+        .to([contentRef.current, mobileContentRef.current], { opacity: 1, y: 0, duration: 0.6 }, 0.65);
 
       // Efek "numpuk" section 1->2: pin Hero persis setinggi dirinya
       // sendiri (bukan angka tebakan), section abisnya otomatis geser
@@ -94,7 +104,9 @@ export default function Hero() {
           <AvailabilityBadge />
         </div>
 
-        {/* Wordmark + foto — overlap di tengah */}
+        {/* Wordmark + foto — overlap di tengah. Foto overlap-nya CUMA di
+            desktop (lg+) sekarang — mobile punya komposisi sendiri di
+            bawah (bukan sekadar wordmark ini yang diperkecil). */}
         <div className="relative flex justify-center items-center">
           {/* maskRef: overflow-hidden "jendela tirai" — wordmark di
               dalemnya digeser dari yPercent:100 (ketutup penuh) ke 0
@@ -126,52 +138,110 @@ export default function Hero() {
             </h1>
           </div>
 
-          {/* Foto — DIBESARIN + nempel turun sampe deket blok teks di
-              bawahnya, biar keliatan "grounded"/nyatu ke layout, bukan
-              stiker kecil yang ngambang doang. Dipositioning relatif ke
-              TINGGI FOTO SENDIRI (top:100% dari wordmark lalu translateY
-              negatif berdasar % tinggi foto), bukan ke tinggi wordmark
-              yang notabene cuma setinggi 1 baris teks — supaya proporsi
-              overlap-nya konsisten di semua ukuran layar.
-              v4 = versi crop rapat (padding transparan sisi kiri asetnya
-              udah dibuang). drop-shadow SENGAJA nggak dipasang — potongan
-              bawah foto rata, jadi shadow blur numpuk keliatan kayak
-              smudge kotak pudar. */}
+          {/* Foto — ASET FINAL BARU (hero-portrait-final.webp), sudah
+              termasuk anotasi dekoratif biru (panah, titik grid, plus,
+              garis orbit) yang dibakar jadi satu gambar transparan —
+              nggak perlu bikin ulang elemen-elemen itu manual jadi HTML/
+              SVG terpisah. Cuma tampil DESKTOP (lg+); ukurannya dibesarin
+              dari versi crop lama karena frame gambar baru ini jauh lebih
+              lebar (nyisain ruang buat anotasi di kiri-kanan), jadi kalau
+              dipasang di lebar yang sama kayak crop lama, orangnya bakal
+              keliatan lebih kecil — DIKOMPENSASI naikin ukuran. */}
           <img
             ref={photoRef}
-            src="/images/hero-photo-v4.webp"
+            src="/images/hero-portrait-final.webp"
             alt={`${profile.name}, Web & AI Engineer`}
-            className="hero-photo absolute pointer-events-none select-none"
+            className="hero-photo hidden lg:block absolute pointer-events-none select-none"
             style={{ opacity: 0 }}
-            width={435}
-            height={276}
+            width={1536}
+            height={1024}
             fetchPriority="high"
             draggable={false}
           />
         </div>
 
-        {/* Baris bawah: tagline+CTA (kiri), sosmed (kanan). items-start
-            (bukan items-end lagi) biar list sosmed nempel sejajar sama
-            headline di atas, nggak ke-dorong ke bawah pas isinya cuma
-            sedikit — sebelumnya items-end bikin list-nya keliatan "ilang"
-            karena mepet banget ke bawah, numpuk sama tombol WA floating. */}
+        {/* ================== MOBILE-ONLY KOMPOSISI (< lg) ==================
+            Bukan sekadar nyusutin layout desktop — ini urutan/hierarchy
+            SENDIRI sesuai spec: role -> deskripsi -> potret (besar,
+            di tengah, nggak nempel navbar/CTA) -> baris CTA+sosmed.
+            Potret di sini BUKAN posisi absolute-overlap kayak desktop,
+            dia di normal flow (ngambil tempatnya sendiri), jadi otomatis
+            punya "breathing room" di atas & bawahnya tanpa perlu itung
+            manual jarak overlap. */}
+        <div ref={mobileContentRef} className="lg:hidden flex flex-col items-center text-center mt-5" style={{ opacity: 0, transform: 'translateY(14px)' }}>
+          <p className="font-bold mb-2" style={{ color: '#3B5FE3', fontSize: 'clamp(15px, 4.2vw, 19px)' }}>
+            {headline || t.hero.headline}
+          </p>
+          <p className="mb-1 max-w-[92vw] line-clamp-3" style={{ color: '#64748B', lineHeight: 1.6, fontSize: 'clamp(12px, 3.2vw, 15px)' }}>
+            {bio || t.hero.description1}
+          </p>
+
+          <img
+            ref={mobilePhotoRef}
+            src="/images/hero-portrait-final.webp"
+            alt={`${profile.name}, Web & AI Engineer`}
+            className="select-none my-4 sm:my-5"
+            style={{ width: 'min(88vw, 420px)', height: 'auto', opacity: 0 }}
+            width={1536}
+            height={1024}
+            loading="eager"
+            draggable={false}
+          />
+
+          <div className="flex items-center justify-center flex-wrap gap-4 gap-y-3">
+            <Magnetic>
+              <button
+                onClick={() => setView('projects')}
+                className="btn-bounce inline-flex items-center gap-1.5 px-5 py-2.5 font-semibold text-white focus-ring"
+                style={{ background: '#3B5FE3', borderRadius: 9999, boxShadow: '0 6px 20px rgba(59, 95, 227,0.35)', fontSize: 'clamp(12px, 3.2vw, 14px)' }}
+              >
+                {t.hero.ctaOrder} <ArrowUpRight size={14} className="shrink-0" />
+              </button>
+            </Magnetic>
+
+            {socialIcons.length > 0 && (
+              <ul className="flex items-center gap-4">
+                {socialIcons.map((s) => (
+                  <li key={s.id}>
+                    <a
+                      href={s.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      data-cursor
+                      className="flex items-center gap-1.5 font-medium focus-ring whitespace-nowrap"
+                      style={{ color: '#334155', fontSize: 'clamp(11px, 2.8vw, 13px)' }}
+                    >
+                      <SocialGlyph label={s.label} iconUrl={s.icon_url} size={14} />
+                      {s.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+
+        {/* ================== DESKTOP-ONLY (lg+) ==================
+            Baris tagline+CTA (kiri) + sosmed (kanan), persis kayak
+            sebelumnya — cuma sekarang eksplisit `hidden lg:flex` karena
+            versi mobile-nya udah punya blok sendiri di atas. */}
         <div
           ref={contentRef}
-          className="relative z-10 mt-28 sm:mt-32 md:mt-56 flex flex-row items-start justify-between gap-3 sm:gap-6 md:gap-8"
+          className="hidden lg:flex relative z-10 mt-64 items-start justify-between gap-8"
           style={{ opacity: 0, transform: 'translateY(14px)' }}
         >
           <div className="min-w-0 flex-1 max-w-[440px]">
-            <p className="font-bold mb-1.5 sm:mb-2" style={{ color: '#3B5FE3', fontSize: 'clamp(13px, 3.6vw, 20px)' }}>
+            <p className="font-bold mb-2" style={{ color: '#3B5FE3', fontSize: 'clamp(13px, 3.6vw, 20px)' }}>
               {headline || t.hero.headline}
             </p>
-            <p className="mb-3 sm:mb-5 line-clamp-3" style={{ color: '#64748B', lineHeight: 1.6, fontSize: 'clamp(10px, 2.6vw, 14px)' }}>
+            <p className="mb-5 line-clamp-3" style={{ color: '#64748B', lineHeight: 1.6, fontSize: 'clamp(10px, 2.6vw, 14px)' }}>
               {bio || t.hero.description1}
             </p>
 
             <Magnetic>
               <button
                 onClick={() => setView('projects')}
-                className="btn-bounce inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-6 py-2 sm:py-3 font-semibold text-white focus-ring"
+                className="btn-bounce inline-flex items-center gap-2 px-6 py-3 font-semibold text-white focus-ring"
                 style={{ background: '#3B5FE3', borderRadius: 9999, boxShadow: '0 6px 20px rgba(59, 95, 227,0.35)', fontSize: 'clamp(11px, 2.8vw, 14px)' }}
               >
                 {t.hero.ctaOrder} <ArrowUpRight size={14} className="shrink-0" />
@@ -180,7 +250,7 @@ export default function Hero() {
           </div>
 
           {socialIcons.length > 0 && (
-            <ul className="flex flex-col gap-1.5 sm:gap-3 shrink-0">
+            <ul className="flex flex-col gap-3 shrink-0">
               {socialIcons.map((s) => (
                 <li key={s.id}>
                   <a
@@ -188,7 +258,7 @@ export default function Hero() {
                     target="_blank"
                     rel="noopener noreferrer"
                     data-cursor
-                    className="flex items-center gap-1.5 sm:gap-2 font-medium focus-ring whitespace-nowrap"
+                    className="flex items-center gap-2 font-medium focus-ring whitespace-nowrap"
                     style={{ color: '#334155', fontSize: 'clamp(9px, 2.4vw, 14px)' }}
                   >
                     <SocialGlyph label={s.label} iconUrl={s.icon_url} size={14} />

@@ -118,10 +118,18 @@ export default function About() {
             </div>
           </div>
 
-          {/* Ilustrasi isometrik custom — SVG + CSS animation, gak perlu setup apapun */}
-          <FadeUp threshold={0.15} delay={120} className="hidden lg:flex justify-center lg:order-first">
-            <Suspense fallback={<DevWorkflowIllustration className="w-full max-w-md" />}>
-              <LottieIllustration src="/animations/seo-isometric.json" className="w-full max-w-md" />
+          {/* Ilustrasi isometrik custom — SVG + CSS animation, gak perlu setup apapun.
+              Sebelumnya `hidden lg:flex` — bikin ilustrasi ini TOTAL nggak
+              kelihatan di mobile/tablet (di bawah 1024px). Sekarang selalu
+              tampil di semua ukuran layar, dan `order-first` (bukan cuma
+              `lg:order-first`) bikin dia selalu di urutan PALING ATAS
+              begitu grid-nya collapse jadi 1 kolom di mobile — jadi kesan
+              "panel besar/immersive duluan, baru teks About" tetep dapet.
+              Reveal effect-nya (FadeUp, delay 120) SAMA PERSIS kayak
+              sebelumnya, cuma visibility & urutannya yang berubah. */}
+          <FadeUp threshold={0.15} delay={120} className="flex justify-center order-first">
+            <Suspense fallback={<DevWorkflowIllustration className="w-full max-w-sm md:max-w-md" />}>
+              <LottieIllustration src="/animations/seo-isometric.json" className="w-full max-w-sm md:max-w-md" />
             </Suspense>
           </FadeUp>
         </div>

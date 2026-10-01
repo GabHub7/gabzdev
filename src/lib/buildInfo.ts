@@ -5,4 +5,4 @@
  * kalau tanggalnya beda dari yang barusan dikirim, berarti situsnya
  * BELUM di-rebuild/deploy ulang, bukan kode-nya yang nggak berubah.
  */
-export const BUILD_VERSION = '2026-09-26 03:00 UTC — mobile-drawer-menu+hero-photo-bigger+viewport-lock-removed';
+export const BUILD_VERSION = '2026-09-29 10:00 UTC — hero-final-portrait+mobile-composition+start-a-project+about-lottie-mobile';

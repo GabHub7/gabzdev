@@ -487,29 +487,19 @@
   }
 
   .hero-photo {
-    /* Mobile: dibesarin lagi — sebelumnya sengaja dikecilin (190px) biar
-       nggak nutupin wordmark yang waktu itu masih kecil, tapi itu bikin
-       foto keliatan kayak thumbnail, kalah jauh sama kesan "prominent"
-       di desktop. Sekarang wordmark-nya JUGA dibesarin (lihat
-       .hero-headline di bawah), jadi dua-duanya naik bareng, tetep
-       proporsional satu sama lain. */
-    width: 260px;
+    /* DESKTOP DOANG sekarang (element-nya `hidden lg:block` di JSX,
+       mobile punya komposisi + <img> sendiri di normal flow).
+       Ukurannya dinaikin dari clamp lama (420-640px) karena aset baru
+       (hero-portrait-final.webp) framenya JAUH lebih lebar — nyisain
+       ruang buat anotasi dekoratif kiri-kanan yang udah dibakar jadi
+       satu sama fotonya. Di lebar yang sama kayak crop lama, orangnya
+       bakal keliatan lebih kecil karena "dimakan" padding anotasi itu
+       — makanya dikompensasi naik ke clamp(600-900px). */
+    width: clamp(600px, 56vw, 900px);
     height: auto;
     left: 50%;
     top: 100%;
-    transform: translate(-50%, -36%) scale(0.94);
-  }
-
-  @media (min-width: 480px) {
-    .hero-photo { width: 310px; transform: translate(-50%, -38%) scale(0.94); }
-  }
-
-  @media (min-width: 768px) {
-    .hero-photo { width: clamp(340px, 34vw, 460px); transform: translate(-50%, -36%) scale(0.94); }
-  }
-
-  @media (min-width: 1024px) {
-    .hero-photo { width: clamp(420px, 40vw, 640px); transform: translate(-50%, -32%) scale(0.94); }
+    transform: translate(-50%, -46%) scale(0.94);
   }
 
   @keyframes contactCtaIn {
