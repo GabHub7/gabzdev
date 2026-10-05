@@ -56,6 +56,8 @@ export interface DashTestimonial {
   photo_url: string | null;
   /** Nomor WA (format 62xxx tanpa +) — kalau diisi, testimoni bisa diklik untuk chat WA orang ini. */
   whatsapp: string | null;
+  /** Warna aksen (hex #RRGGBB) buat avatar & bintang testimoni. Opsional. */
+  accent_color?: string | null;
 }
 
 export interface DashSkill {
@@ -237,24 +239,36 @@ export async function fetchTestimonials(site: SiteKey): Promise<DashTestimonial[
     ...t,
     photo_url: t.photo_url ?? null,
     whatsapp: t.whatsapp ?? null,
+    accent_color: t.accent_color ?? null,
   }));
 }
 
+const mentionsAccentColumn = (msg: string) => /accent_color/i.test(msg);
+const withoutAccent = <T extends object>(obj: T): T => {
+  const copy = { ...obj } as Record<string, unknown>;
+  delete copy.accent_color;
+  return copy as T;
+};
+
 export async function addTestimonial(site: SiteKey, t: Omit<DashTestimonial, 'id' | 'site'>): Promise<DashTestimonial | null> {
-  const { data, error } = await supabase
-    .from('testimonials')
-    .insert({ site, ...t })
-    .select()
-    .single();
-  if (error) {
-    trackError('addTestimonial', error.message);
+  let res = await supabase.from('testimonials').insert({ site, ...t }).select().single();
+  // Kolom accent_color belum ada di DB (migrasi SQL belum dijalankan)? Simpan tanpa itu
+  // supaya testimoni tetap tersimpan, bukan gagal total.
+  if (res.error && mentionsAccentColumn(res.error.message)) {
+    res = await supabase.from('testimonials').insert({ site, ...withoutAccent(t) }).select().single();
+  }
+  if (res.error) {
+    trackError('addTestimonial', res.error.message);
     return null;
   }
-  return data as DashTestimonial;
+  return res.data as DashTestimonial;
 }
 
 export async function updateTestimonial(id: number, t: Partial<Omit<DashTestimonial, 'id' | 'site'>>): Promise<boolean> {
-  const { error } = await supabase.from('testimonials').update(t).eq('id', id);
+  let { error } = await supabase.from('testimonials').update(t).eq('id', id);
+  if (error && mentionsAccentColumn(error.message)) {
+    ({ error } = await supabase.from('testimonials').update(withoutAccent(t)).eq('id', id));
+  }
   if (error) {
     trackError('updateTestimonial', error.message);
     return false;

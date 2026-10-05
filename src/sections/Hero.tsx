@@ -1,6 +1,5 @@
-import { useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useView } from '../context/ViewContext';
 import { useTranslation } from '../lib/i18n';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
@@ -9,24 +8,21 @@ import { useSeo } from '../hooks/useSeo';
 import { ArrowUpRight } from 'lucide-react';
 import { SocialGlyph } from '../lib/socialIcon';
 import Magnetic from '../components/fx/Magnetic';
-import { AvailabilityBadge } from '../components/AvailabilityBadge';
 
 /**
  * Hero — wordmark besar dua-nada "GABZ" (outline) + "DEV" (solid biru)
  * sebagai focal point utama, foto nempel di tengah nutupin sebagian teks.
  *
- * v4 (fix bug numpuk): sebelumnya efek "Hero diem pas section abisnya
- * numpuk" dibikin manual pake CSS position:sticky + wrapper App.tsx yang
- * tingginya di-hardcode (100dvh + 60vh). Begitu foto/wordmark Hero
- * dibesarin beberapa kali di revisi2 sebelumnya, tinggi Hero yang
- * SEBENERNYA jadi lebih dari asumsi itu, bikin sticky-nya nggak sempet
- * "nge-pin" sama sekali (langsung lepas begitu discroll dikit).
- * Sekarang dibikin ulang PERSIS kayak flaid.my.id (dicek dari source code
- * aslinya): pake GSAP ScrollTrigger.create({ pin:true, pinSpacing:false,
- * start:'top top', end:'bottom top' }) LANGSUNG di section Hero-nya
- * sendiri — durasi pin-nya otomatis ngikutin TINGGI HERO YANG BENERAN,
- * jadi nggak akan pernah salah hitung lagi walau kontennya berubah-ubah
- * ukuran ke depannya. Wrapper manual di App.tsx udah dihapus.
+ * v5 (optimasi scroll): efek "numpuk" section 1->2 dulu pake GSAP
+ * ScrollTrigger pin — itu ngitung ulang posisi pake JavaScript tiap frame
+ * scroll, dan barengan sama Lenis yang juga nge-drive scroll, jadi dua
+ * sistem rebutan => berat/patah-patah. Sekarang pake CSS `position:
+ * sticky` murni (dikerjain compositor GPU, nol JS per frame). Hero
+ * ke-pin di belakang About (About z-10 + background solid). Begitu About
+ * udah nutup Hero sepenuhnya, Hero di-`visibility:hidden` lewat 1 listener
+ * scroll pasif (cuma nulis style kalau statusnya berubah) — jadi nggak
+ * ada biaya paint ngendon di belakang sepanjang halaman.
+ * Otomatis dilewatin kalau user set prefers-reduced-motion.
  */
 
 export default function Hero() {
@@ -39,7 +35,6 @@ export default function Hero() {
   const socialIcons = useSocialIcons('gabzdev');
 
   const rootRef = useRef<HTMLElement>(null);
-  const badgeRef = useRef<HTMLDivElement>(null);
   const maskRef = useRef<HTMLDivElement>(null);
   const wordmarkRef = useRef<HTMLHeadingElement>(null);
   const photoRef = useRef<HTMLImageElement>(null);
@@ -50,7 +45,6 @@ export default function Hero() {
   useLayoutEffect(() => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const els = [
-      badgeRef.current,
       maskRef.current,
       wordmarkRef.current,
       photoRef.current,
@@ -63,47 +57,65 @@ export default function Hero() {
       return;
     }
 
-    gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
       tl.set(wordmarkRef.current, { yPercent: 100 })
         .set(maskRef.current, { clipPath: 'inset(0 0 0 0)' })
-        .to(badgeRef.current, { opacity: 1, y: 0, duration: 0.5 }, 0)
         .to(wordmarkRef.current, { yPercent: 0, duration: 0.9 }, 0.15)
         .to([photoRef.current, mobilePhotoRef.current], { opacity: 1, scale: 1, duration: 0.7 }, 0.45)
         .to([contentRef.current, mobileContentRef.current], { opacity: 1, y: 0, duration: 0.6 }, 0.65);
 
-      // Efek "numpuk" section 1->2: pin Hero persis setinggi dirinya
-      // sendiri (bukan angka tebakan), section abisnya otomatis geser
-      // naik nutupin begitu pin-nya lepas.
-      ScrollTrigger.create({
-        trigger: rootRef.current,
-        start: 'top top',
-        end: 'bottom top',
-        pin: true,
-        pinSpacing: false,
-      });
     }, rootRef);
 
     return () => ctx.revert();
+  }, []);
+
+  // Hero sticky di belakang About. Setelah About nutup penuh (scrollY >
+  // tinggi Hero), sembunyiin Hero biar browser nggak ngecat layer
+  // fullscreen yang nggak kelihatan. Tinggi Hero di-cache lewat
+  // ResizeObserver, handler scroll pasif + rAF, tulis style HANYA saat flip.
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    let heroH = el.offsetHeight;
+    let hidden = false;
+    let ticking = false;
+    const ro = new ResizeObserver(() => {
+      heroH = el.offsetHeight;
+    });
+    ro.observe(el);
+    const update = () => {
+      ticking = false;
+      const shouldHide = window.scrollY > heroH + 40;
+      if (shouldHide !== hidden) {
+        hidden = shouldHide;
+        el.style.visibility = shouldHide ? 'hidden' : 'visible';
+      }
+    };
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      ro.disconnect();
+      el.style.visibility = '';
+    };
   }, []);
 
   return (
     <section
       ref={rootRef}
       id="hero"
-      className="relative min-h-dvh flex flex-col justify-center pt-20 sm:pt-24 md:pt-28 pb-10 sm:pb-12 px-6 md:px-10 overflow-hidden"
+      className="sticky top-0 z-0 min-h-dvh flex flex-col justify-center pt-20 sm:pt-24 md:pt-28 pb-10 sm:pb-12 px-6 md:px-10 overflow-hidden"
       style={{ background: '#FFFFFF' }}
     >
       <div className="max-w-[1200px] mx-auto w-full">
-        {/* Badge — cuma di bawah lg, versi lg-ke-atas nongol di Header
-            (breakpoint HARUS sama kayak di Header biar nggak ada rentang
-            lebar layar yang badge-nya nggak muncul di dua-duanya). */}
-        <div ref={badgeRef} className="lg:hidden flex justify-center mb-4 sm:mb-6" style={{ opacity: 0, transform: 'translateY(10px)' }}>
-          <AvailabilityBadge />
-        </div>
-
         {/* Wordmark + foto — overlap di tengah. Foto overlap-nya CUMA di
             desktop (lg+) sekarang — mobile punya komposisi sendiri di
             bawah (bukan sekadar wordmark ini yang diperkecil). */}
@@ -156,6 +168,7 @@ export default function Hero() {
             width={1536}
             height={1024}
             fetchPriority="high"
+            decoding="async"
             draggable={false}
           />
         </div>

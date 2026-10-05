@@ -111,7 +111,7 @@ export default function App() {
                 <main>
                   {/* Fold pertama — eager, jadi LCP cepat.
                       Efek "kartu numpuk": Hero sekarang nge-pin DIRINYA
-                      SENDIRI lewat GSAP ScrollTrigger (lihat Hero.tsx) —
+                      SENDIRI lewat CSS position:sticky (lihat Hero.tsx) —
                       durasi pin-nya otomatis ngikutin tinggi Hero yang
                       beneran, jadi nggak ada lagi wrapper manual dengan
                       angka tebakan di sini. About (z-index lebih tinggi +
@@ -120,9 +120,11 @@ export default function App() {
                       lain tetap scroll normal biasa.
                       Urutan: Hero -> [numpuk] -> About -> Experience -> Skills
                       -> Packages -> Portfolio -> Footer. */}
-                  <Hero />
-                  <div className="relative" style={{ zIndex: 10 }}>
-                    <About />
+                  <div className="relative">
+                    <Hero />
+                    <div className="relative" style={{ zIndex: 10 }}>
+                      <About />
+                    </div>
                   </div>
                   <Experience />
                   {/* Di bawah fold — lazy. Fallback dikasih minHeight supaya

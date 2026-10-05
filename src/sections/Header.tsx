@@ -5,7 +5,6 @@ import { useView } from '../context/ViewContext';
 import { useTranslation } from '../lib/i18n';
 import type { Lang } from '../context/LanguageContext';
 import Magnetic from '../components/fx/Magnetic';
-import { AvailabilityBadge } from '../components/AvailabilityBadge';
 
 
 function LanguageSwitcher() {
@@ -155,8 +154,6 @@ export default function Header() {
               <span style={{ color: '#0F172A' }}>dev</span>
             </span>
           </button>
-
-          <AvailabilityBadge className="hidden lg:inline-flex" />
 
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (

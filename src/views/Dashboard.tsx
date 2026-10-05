@@ -546,6 +546,7 @@ function TestimonialsPanel({ site }: { site: SiteMode }) {
   const [formDesignation, setFormDesignation] = useState('');
   const [formQuote, setFormQuote] = useState('');
   const [formRating, setFormRating] = useState(5);
+  const [formAccent, setFormAccent] = useState('');
   const [formPhoto, setFormPhoto] = useState('');
   const [formWhatsapp, setFormWhatsapp] = useState('');
   const [photoMode, setPhotoMode] = useState<'upload' | 'link'>('link');
@@ -561,14 +562,14 @@ function TestimonialsPanel({ site }: { site: SiteMode }) {
 
   const resetForm = () => {
     setFormName(''); setFormDesignation(''); setFormQuote(''); setFormRating(5);
-    setFormPhoto(''); setFormWhatsapp(''); setPhotoMode('link');
+    setFormPhoto(''); setFormWhatsapp(''); setFormAccent(''); setPhotoMode('link');
     setEditingId(null); setShowForm(false);
   };
 
   const handleEdit = (t: DashTestimonial) => {
     setFormName(t.name); setFormDesignation(t.designation);
     setFormQuote(t.quote); setFormRating(t.rating);
-    setFormPhoto(t.photo_url || ''); setFormWhatsapp(t.whatsapp || '');
+    setFormPhoto(t.photo_url || ''); setFormWhatsapp(t.whatsapp || ''); setFormAccent(t.accent_color || '');
     setPhotoMode('link');
     setEditingId(t.id); setShowForm(true);
   };
@@ -600,6 +601,7 @@ function TestimonialsPanel({ site }: { site: SiteMode }) {
     const payload = {
       name: formName, designation: formDesignation, quote: formQuote, rating: formRating,
       photo_url: formPhoto || null, whatsapp: formWhatsapp.replace(/\D/g, '') || null,
+      accent_color: /^#[0-9a-fA-F]{6}$/.test(formAccent.trim()) ? formAccent.trim() : null,
     };
     const ok = editingId !== null
       ? await updateTestimonial(editingId, payload)
@@ -639,6 +641,19 @@ function TestimonialsPanel({ site }: { site: SiteMode }) {
             <FieldInput label="Nama" value={formName} onChange={setFormName} placeholder="Nama klien..." />
             <FieldInput label="Jabatan / Usaha" value={formDesignation} onChange={setFormDesignation} placeholder="Owner Toko..." />
             <FieldTextarea label="Testimoni" value={formQuote} onChange={setFormQuote} rows={4} />
+            <div className="flex items-end gap-3">
+              <div className="flex-1">
+                <FieldInput label="Warna Aksen — avatar & bintang (hex, opsional)" value={formAccent} onChange={setFormAccent} placeholder="#3B5FE3" />
+              </div>
+              <input
+                type="color"
+                aria-label="Pilih warna aksen"
+                value={/^#[0-9a-fA-F]{6}$/.test(formAccent.trim()) ? formAccent.trim() : '#3B5FE3'}
+                onChange={(e) => setFormAccent(e.target.value)}
+                className="w-11 h-11 rounded-lg cursor-pointer shrink-0"
+                style={{ border: '1px solid rgba(0,0,0,0.12)', padding: 2, background: 'transparent' }}
+              />
+            </div>
             <div>
               <label className="block text-xs font-semibold mb-1.5 uppercase tracking-wider" style={{ color: '#94A3B8' }}>Rating</label>
               <StarInput value={formRating} onChange={setFormRating} />
